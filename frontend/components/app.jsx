@@ -39,7 +39,7 @@ var App = React.createClass({
     return (
       <div className="wrapper">
         <header></header>
-        {loginMod}
+        {this.props.children}
       </div>
     );
   }

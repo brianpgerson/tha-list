@@ -32,7 +32,6 @@ var AuthActions = {
   },
 
   login: function(sessionParams) {
-    debugger;
     AuthServerApi.requestLogin(sessionParams, AuthActions.receiveLoggedInUser);
   },
 

@@ -51,11 +51,13 @@
 	var IndexRoute = __webpack_require__(159).IndexRoute;
 	var hashHistory = __webpack_require__(159).hashHistory;
 	var App = __webpack_require__(216);
+	var Login = __webpack_require__(239);
 	var Map = __webpack_require__(240);
 	
 	var routes = React.createElement(
 	  Route,
 	  { component: App, path: '/' },
+	  React.createElement(IndexRoute, { component: Login }),
 	  React.createElement(Route, { component: Map, path: 'map' })
 	);
 	
@@ -24784,7 +24786,7 @@
 	      'div',
 	      { className: 'wrapper' },
 	      React.createElement('header', null),
-	      loginMod
+	      this.props.children
 	    );
 	  }
 	});
@@ -31560,7 +31562,6 @@
 	  },
 	
 	  login: function (sessionParams) {
-	    debugger;
 	    AuthServerApi.requestLogin(sessionParams, AuthActions.receiveLoggedInUser);
 	  },
 	
@@ -31812,7 +31813,9 @@
 	        position: { lat: listings[id].lat, lng: listings[id].lng },
 	        map: this.map,
 	        title: listings[id].name,
-	        description: listings[id].description
+	        description: listings[id].description,
+	        id: id
+	
 	      });
 	    });
 	
@@ -31821,12 +31824,12 @@
 	      return marker.title;
 	    });
 	
-	    var listingTitles = listingObjects.map(function (listing) {
-	      return listing.title;
+	    var listingIds = listingObjects.map(function (listing) {
+	      return listing.id;
 	    });
 	
 	    var outOfBoundsMarkers = this.markers.filter(function (marker) {
-	      return listingTitles.indexOf(marker.title) < 0;
+	      return listingIds.indexOf(marker.id) < 0;
 	    });
 	
 	    this.nullifyOutOfBounds(outOfBoundsMarkers);

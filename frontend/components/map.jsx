@@ -45,7 +45,9 @@ var Map = React.createClass({
         position: {lat: listings[id].lat, lng: listings[id].lng },
         map: this.map,
         title: listings[id].name,
-        description: listings[id].description
+        description: listings[id].description,
+        id: id
+
       });
     });
 
@@ -54,12 +56,12 @@ var Map = React.createClass({
       return marker.title;
     });
 
-    var listingTitles = listingObjects.map(function(listing){
-      return listing.title;
+    var listingIds = listingObjects.map(function(listing){
+      return listing.id;
     });
 
     var outOfBoundsMarkers = this.markers.filter(function(marker){
-      return listingTitles.indexOf(marker.title) < 0;
+      return listingIds.indexOf(marker.id) < 0;
     });
 
     this.nullifyOutOfBounds(outOfBoundsMarkers);
@@ -67,7 +69,8 @@ var Map = React.createClass({
     listingObjects.forEach(function(listingMarker){
 
       var infowindow = new google.maps.InfoWindow({
-        content: "<span class='info-window'>" + listingMarker.title + "<br />" + listingMarker.description + "</span>"
+        content: "<span class='info-window'>" + listingMarker.title +
+                  "<br />" + listingMarker.description + "</span>"
       });
 
       listingMarker.addListener('click', function() {
