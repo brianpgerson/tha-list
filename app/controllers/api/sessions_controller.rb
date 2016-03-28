@@ -1,9 +1,9 @@
 class Api::SessionsController < ApplicationController
 
   def create
-    @user = User.find_by_credentials(user_params[:name], user_params[:password])
+    @user = User.find_by_credentials(user_params[:username], user_params[:password])
     if @user.nil?
-      render json: {errors: ['Invalid name or password']}, status: :unauthorized
+      render json: {errors: ['Invalid username or password']}, status: :unauthorized
     else
       login(@user)
       render :show
@@ -17,7 +17,7 @@ class Api::SessionsController < ApplicationController
     else
       render json: {
         session_token: nil,
-        name: nil,
+        username: nil,
         id: nil
       }
     end
@@ -28,7 +28,7 @@ class Api::SessionsController < ApplicationController
     logout
     render json: {
       session_token: nil,
-      name: nil,
+      username: nil,
       id: nil
     }
   end
@@ -36,7 +36,7 @@ class Api::SessionsController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:name, :password)
+    params.require(:user).permit(:username, :password)
   end
 
 end

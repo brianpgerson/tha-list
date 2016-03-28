@@ -1,7 +1,9 @@
+require "byebug"
+
 class Api::ListingsController < ApplicationController
 
   def index
-    @listings = Listing.all
+    @listings = Listing.in_bounds(params[:bounds])
     render :index
   end
 

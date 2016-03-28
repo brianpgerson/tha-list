@@ -1,4 +1,1 @@
-json.array! @listings do |listing|
-  json.name listing.name
-  json.description  listing.description
-end
+json.partial! 'api/listings/listing', collection: @listings, as: :listing

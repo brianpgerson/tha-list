@@ -11,15 +11,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160326214035) do
+ActiveRecord::Schema.define(version: 20160328024430) do
 
   create_table "listings", force: :cascade do |t|
-    t.string   "name",        null: false
-    t.string   "description", null: false
+    t.string   "name",                      null: false
+    t.string   "description",               null: false
     t.integer  "yelp_biz_id"
-    t.integer  "owner_id",    null: false
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.integer  "owner_id",                  null: false
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+    t.float    "lat",         default: 0.0, null: false
+    t.float    "lng",         default: 0.0, null: false
   end
 
   add_index "listings", ["owner_id"], name: "index_listings_on_owner_id"
@@ -27,7 +29,6 @@ ActiveRecord::Schema.define(version: 20160326214035) do
 
   create_table "users", force: :cascade do |t|
     t.string   "username",        null: false
-    t.string   "email",           null: false
     t.string   "password_digest", null: false
     t.string   "session_token",   null: false
     t.datetime "created_at",      null: false

@@ -1,12 +1,11 @@
 class User < ActiveRecord::Base
   attr_reader :password
-  validates_presence_of :username, :email, :session_token
+  validates_presence_of :username, :session_token
   validates :username, uniqueness: true;
-  validates :email, uniqueness: true
   validates :password_digest, presence: { message: "Password can't be blank" }
   validates :password, length: {minimum: 6, allow_nil: true}
 
-  after_initialize :ensure_session_token, :ensure_slug
+  after_initialize :ensure_session_token
 
   has_many :listings,
     foreign_key: :owner_id,
@@ -39,10 +38,6 @@ class User < ActiveRecord::Base
 
   def ensure_session_token
     self.session_token ||= User.generate_session_token
-  end
-
-  def ensure_slug
-    self.slug ||= self.username
   end
 
   def self.generate_session_token

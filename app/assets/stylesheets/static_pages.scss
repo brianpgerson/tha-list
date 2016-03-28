@@ -1,3 +1,63 @@
 // Place all the styles related to the StaticPages controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+
+html {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  background-image: asset-data-url("city.jpg");
+  background-size: cover;
+  color: ghostwhite;
+  font-family: 'Lato', sans-serif;
+}
+
+header {
+  height: 200px;
+  width: 800px;
+  margin: 0 auto;
+  background-image: asset-data-url('white-pink-logo.png');
+}
+
+h1, h2, h3 {
+  font-family: 'Permanent Marker', cursive;
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+.login-text-input {
+  margin-left: 10px;
+  border-radius: 3px;
+  padding: 5px;
+  background-color: rgba(0,0,0,.8);
+  color: rgb(238,1,123);
+  margin-bottom: 20px;
+}
+
+.login-form {
+  width: 300px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.login-form input[type=submit] {
+  margin: 5px;
+  border: 1px solid ghostwhite;
+  background-color: black;
+  color: ghostwhite;
+  padding: 5px;
+  transition: color .2s ease-in-out;
+}
+
+.login-form input[type=submit]:hover {
+  cursor: pointer;
+  color: rgb(238,1,123);
+}

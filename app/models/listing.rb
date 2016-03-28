@@ -1,6 +1,14 @@
+require "byebug"
+
 class Listing < ActiveRecord::Base
-  validates_presence_of :name, :description, :owner_id
+  validates_presence_of :name, :description, :owner_id, :lat, :lng
   after_initialize :ensure_description
+
+  def self.in_bounds(boundaries)
+    listings = Listing.where("lat BETWEEN #{boundaries['southWest']['lat']} AND #{boundaries['northEast']['lat']}").where("lng BETWEEN #{boundaries['southWest']['lng']} AND #{boundaries['northEast']['lng']}")
+
+    listings
+  end
 
   private
 
