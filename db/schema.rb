@@ -11,21 +11,33 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160328024430) do
+ActiveRecord::Schema.define(version: 20160328202400) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
 
   create_table "listings", force: :cascade do |t|
     t.string   "name",                      null: false
     t.string   "description",               null: false
     t.integer  "yelp_biz_id"
-    t.integer  "owner_id",                  null: false
     t.datetime "created_at",                null: false
     t.datetime "updated_at",                null: false
     t.float    "lat",         default: 0.0, null: false
     t.float    "lng",         default: 0.0, null: false
+    t.integer  "list_id",     default: 1,   null: false
   end
 
-  add_index "listings", ["owner_id"], name: "index_listings_on_owner_id"
-  add_index "listings", ["yelp_biz_id"], name: "index_listings_on_yelp_biz_id"
+  add_index "listings", ["yelp_biz_id"], name: "index_listings_on_yelp_biz_id", using: :btree
+
+  create_table "lists", force: :cascade do |t|
+    t.string   "name",                        null: false
+    t.integer  "owner_id",                    null: false
+    t.integer  "subscriber_ids", default: [],              array: true
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+  end
+
+  add_index "lists", ["owner_id"], name: "index_lists_on_owner_id", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "username",        null: false
@@ -35,7 +47,7 @@ ActiveRecord::Schema.define(version: 20160328024430) do
     t.datetime "updated_at",      null: false
   end
 
-  add_index "users", ["session_token"], name: "index_users_on_session_token"
-  add_index "users", ["username"], name: "index_users_on_username"
+  add_index "users", ["session_token"], name: "index_users_on_session_token", using: :btree
+  add_index "users", ["username"], name: "index_users_on_username", using: :btree
 
 end

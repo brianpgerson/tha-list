@@ -3,14 +3,18 @@ require "byebug"
 class Api::ListingsController < ApplicationController
 
   def index
-    @listings = Listing.in_bounds(params[:bounds])
+    if params[:bounds].empty?
+      @listings = List.find(params[:list_id]).listings
+    else
+      @listings = List.find(params[:list_id]).listings.in_bounds(params[:bounds])
+    end
     render :index
   end
 
   def create
     @listing = Listing.new(listing_params)
     if @listing.save
-      render :show
+      render :index
     else
       render json: {errors: @listing.errors.full_messages}, status: :unprocessable_entity
     end
@@ -43,6 +47,6 @@ class Api::ListingsController < ApplicationController
   private
 
   def listing_params
-    params.require(:listing).permit(:name, :description)
+    params.require(:listing).permit(:name, :description, :lat, :lng, :list_id)
   end
 end

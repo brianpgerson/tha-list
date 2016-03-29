@@ -1,11 +1,42 @@
 var ErrorActions = require('../actions/errorActions');
 
 var ListingServerApi = {
-  fetchListings: function(boundaries, callback){
+  addListing: function(listingParams, callback){
+    debugger;
     $.ajax({
     url: "api/listings",
+    type: "POST",
+    data: listingParams,
+    success: function(data){
+        callback(data);
+      },
+    error: function(response){
+        var error = JSON.parse(response.responseText).errors;
+        ErrorActions.sendError(error);
+      }
+    });
+  },
+
+  fetchListings: function(listId, boundaries, callback){
+    $.ajax({
+    url: "api/lists/" + listId + "/listings",
     type: "GET",
     data: boundaries,
+    success: function(data){
+        callback(data);
+      },
+    error: function(response){
+        var error = JSON.parse(response.responseText).errors;
+        ErrorActions.sendError(error);
+      }
+    });
+  },
+
+  fetchListingsNoBoundaries: function(listId, callback){
+    $.ajax({
+    url: "api/lists/" + listId + "/listings",
+    type: "GET",
+    data: {bounds: null},
     success: function(data){
         callback(data);
       },

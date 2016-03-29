@@ -14,8 +14,85 @@
  *= require_self
  */
 
- .map {
-   width: 500px;
-   height: 500px;
-   margin: 50px auto;
- }
+.map {
+  width: 500px;
+  height: 500px;
+  margin: 50px auto;
+}
+
+.group {
+  clear: both;
+  content: "";
+  display: table;
+}
+
+.main-buttons-container {
+  margin: 10px auto;
+  min-width: 246px;
+}
+
+.main-button {
+  padding: 10px 20px;
+  font-size: 1.2em;
+  font-weight: bold;
+  margin: 2px;
+  background-color: ghostwhite;
+  color: black;
+  border: 2px solid black;
+}
+
+.main-button:hover {
+  color: rgb(238,1,123);
+  border-color: rgb(238,1,123);
+}
+
+.secondary-color {
+  background-color: black;
+  border-color: white;
+  color: white;
+  font-family: 'Permanent Marker', cursive;
+}
+
+.list-selector {
+  width: 98%;
+  font-size: 1.2em;
+  margin: 0 auto;
+  display: block;
+  color: white;
+  background-color: black;
+}
+
+.login-text-input {
+  margin-top: 5px;
+  border-radius: 3px;
+  padding: 5px;
+  background-color: rgba(0,0,0,.8);
+  color: rgb(238,1,123);
+  margin-bottom: 20px;
+}
+
+.login-form {
+  width: 300px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.listing-form {
+  width: 400px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.login-form input[type=submit] {
+  margin: 5px;
+  border: 1px solid ghostwhite;
+  background-color: black;
+  color: ghostwhite;
+  padding: 5px;
+  transition: color .2s ease-in-out;
+}
+
+.login-form input[type=submit]:hover {
+  cursor: pointer;
+  color: rgb(238,1,123);
+}

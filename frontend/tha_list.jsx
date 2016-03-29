@@ -5,13 +5,16 @@ var Route = require('react-router').Route;
 var IndexRoute = require('react-router').IndexRoute;
 var hashHistory = require('react-router').hashHistory;
 var App = require('./components/app');
+var List = require('./components/list');
 var Login = require('./components/login');
 var Map = require('./components/map');
+var Add = require('./components/add');
 
 var routes = (
   <Route component={App} path="/">
-    <IndexRoute component={Login}></IndexRoute>
     <Route component={Map} path="map"></Route>
+    <Route component={List} path="list"></Route>
+    <Route component={Add} path="add"></Route>
   </Route>
 );
 
