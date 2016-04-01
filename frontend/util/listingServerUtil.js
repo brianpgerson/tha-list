@@ -2,7 +2,6 @@ var ErrorActions = require('../actions/errorActions');
 
 var ListingServerApi = {
   addListing: function(listingParams, callback){
-    debugger;
     $.ajax({
     url: "api/listings",
     type: "POST",

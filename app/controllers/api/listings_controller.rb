@@ -11,8 +11,26 @@ class Api::ListingsController < ApplicationController
     render :index
   end
 
+  def get_yelp_info(input)
+    debugger
+    parameters = {term: input['name'], limit: 1}
+    res = Yelp.client.search(input['city'], parameters).businesses.first;
+    listing = {
+      yelp_biz_id: res.id,
+      name: res.name,
+      description: input['description'],
+      lat: res.location.coordinate.latitude,
+      lng: res.location.coordinate.longitude,
+      rating: res.rating,
+      rating_img_url: res.rating_img_url,
+      how_bad_wanna_go: input['how_bad_wanna_go'],
+      list_id: input['list_id']
+    }
+  end
+
   def create
-    @listing = Listing.new(listing_params)
+    full_listing = get_yelp_info(listing_params)
+    @listing = Listing.new(full_listing)
     if @listing.save
       render :index
     else
@@ -47,6 +65,6 @@ class Api::ListingsController < ApplicationController
   private
 
   def listing_params
-    params.require(:listing).permit(:name, :description, :lat, :lng, :list_id)
+    params.require(:listing).permit(:name, :description, :how_bad_wanna_go, :city, :list_id)
   end
 end

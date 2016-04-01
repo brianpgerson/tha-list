@@ -51,9 +51,9 @@
 	var IndexRoute = __webpack_require__(159).IndexRoute;
 	var hashHistory = __webpack_require__(159).hashHistory;
 	var App = __webpack_require__(216);
-	var List = __webpack_require__(245);
-	var Login = __webpack_require__(239);
-	var Map = __webpack_require__(240);
+	var List = __webpack_require__(248);
+	var Login = __webpack_require__(240);
+	var Map = __webpack_require__(241);
 	var Add = __webpack_require__(250);
 	
 	var routes = React.createElement(
@@ -24744,10 +24744,10 @@
 	var React = __webpack_require__(1);
 	var SessionStore = __webpack_require__(217);
 	var AuthActions = __webpack_require__(237);
-	var Login = __webpack_require__(239);
-	var Map = __webpack_require__(240);
-	var ListStore = __webpack_require__(248);
-	var ListActions = __webpack_require__(247);
+	var Login = __webpack_require__(240);
+	var Map = __webpack_require__(241);
+	var ListStore = __webpack_require__(245);
+	var ListActions = __webpack_require__(246);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -31699,7 +31699,7 @@
 /* 238 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var ErrorActions = __webpack_require__(243);
+	var ErrorActions = __webpack_require__(239);
 	
 	var AuthServerApi = {
 	  requestLoginCheck: function (callback) {
@@ -31778,6 +31778,28 @@
 
 /***/ },
 /* 239 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(218);
+	
+	var ErrorActions = {
+	  sendError: function (errors) {
+	    AppDispatcher.dispatch({
+	      actionType: "DISPLAY_ERRORS",
+	      errors: errors
+	    });
+	  },
+	  resetErrors: function () {
+	    AppDispatcher.dispatch({
+	      actionType: "RESET_ERRORS"
+	    });
+	  }
+	};
+	
+	module.exports = ErrorActions;
+
+/***/ },
+/* 240 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -31878,13 +31900,13 @@
 	module.exports = Login;
 
 /***/ },
-/* 240 */
+/* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var ListingStore = __webpack_require__(242);
-	var ListingActions = __webpack_require__(244);
-	var ListStore = __webpack_require__(248);
+	var ListingActions = __webpack_require__(243);
+	var ListStore = __webpack_require__(245);
 	
 	var Map = React.createClass({
 	  displayName: 'Map',
@@ -32000,14 +32022,76 @@
 	module.exports = Map;
 
 /***/ },
-/* 241 */
+/* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var ErrorActions = __webpack_require__(243);
+	var AppDispatcher = __webpack_require__(218);
+	var Store = __webpack_require__(222).Store;
+	
+	var ListingStore = new Store(AppDispatcher);
+	var _listings = [];
+	
+	function resetListings(listings) {
+	  _listings = listings;
+	}
+	
+	ListingStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	    case "LISTINGS_RECEIVED":
+	      resetListings(payload.listings);
+	      this.__emitChange();
+	      break;
+	  }
+	};
+	
+	ListingStore.all = function () {
+	  return _listings;
+	};
+	
+	module.exports = ListingStore;
+
+/***/ },
+/* 243 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(218);
+	var ListingServerApi = __webpack_require__(244);
+	
+	var ListingActions = {
+	
+	  // ======INBOUND
+	  receiveListings: function (listings) {
+	    AppDispatcher.dispatch({
+	      actionType: "LISTINGS_RECEIVED",
+	      listings: listings
+	    });
+	  },
+	
+	  // ======OUTBOUND
+	  addListing: function (listingParams) {
+	    ListingServerApi.addListing(listingParams, ListingActions.receiveListings);
+	  },
+	
+	  fetchListings: function (listId, boundaries) {
+	    ListingServerApi.fetchListings(listId, boundaries, ListingActions.receiveListings);
+	  },
+	
+	  fetchListingsNoBoundaries: function (listId) {
+	    ListingServerApi.fetchListingsNoBoundaries(listId, ListingActions.receiveListings);
+	  }
+	
+	};
+	
+	module.exports = ListingActions;
+
+/***/ },
+/* 244 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var ErrorActions = __webpack_require__(239);
 	
 	var ListingServerApi = {
 	  addListing: function (listingParams, callback) {
-	    debugger;
 	    $.ajax({
 	      url: "api/listings",
 	      type: "POST",
@@ -32056,233 +32140,7 @@
 	module.exports = ListingServerApi;
 
 /***/ },
-/* 242 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppDispatcher = __webpack_require__(218);
-	var Store = __webpack_require__(222).Store;
-	
-	var ListingStore = new Store(AppDispatcher);
-	var _listings = [];
-	
-	function resetListings(listings) {
-	  _listings = listings;
-	}
-	
-	ListingStore.__onDispatch = function (payload) {
-	  switch (payload.actionType) {
-	    case "LISTINGS_RECEIVED":
-	      resetListings(payload.listings);
-	      this.__emitChange();
-	      break;
-	  }
-	};
-	
-	ListingStore.all = function () {
-	  return _listings;
-	};
-	
-	module.exports = ListingStore;
-
-/***/ },
-/* 243 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppDispatcher = __webpack_require__(218);
-	
-	var ErrorActions = {
-	  sendError: function (errors) {
-	    AppDispatcher.dispatch({
-	      actionType: "DISPLAY_ERRORS",
-	      errors: errors
-	    });
-	  },
-	  resetErrors: function () {
-	    AppDispatcher.dispatch({
-	      actionType: "RESET_ERRORS"
-	    });
-	  }
-	};
-	
-	module.exports = ErrorActions;
-
-/***/ },
-/* 244 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppDispatcher = __webpack_require__(218);
-	var ListingServerApi = __webpack_require__(241);
-	
-	var ListingActions = {
-	
-	  // ======INBOUND
-	  receiveListings: function (listings) {
-	    AppDispatcher.dispatch({
-	      actionType: "LISTINGS_RECEIVED",
-	      listings: listings
-	    });
-	  },
-	
-	  // ======OUTBOUND
-	  addListing: function (listingParams) {
-	    ListingServerApi.addListing(listingParams, ListingActions.receiveListings);
-	  },
-	
-	  fetchListings: function (listId, boundaries) {
-	    ListingServerApi.fetchListings(listId, boundaries, ListingActions.receiveListings);
-	  },
-	
-	  fetchListingsNoBoundaries: function (listId) {
-	    ListingServerApi.fetchListingsNoBoundaries(listId, ListingActions.receiveListings);
-	  }
-	
-	};
-	
-	module.exports = ListingActions;
-
-/***/ },
 /* 245 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var SessionStore = __webpack_require__(217);
-	var ListingStore = __webpack_require__(242);
-	var AuthActions = __webpack_require__(237);
-	var ListingActions = __webpack_require__(244);
-	var ListItem = __webpack_require__(246);
-	var ListStore = __webpack_require__(248);
-	var ListingStore = __webpack_require__(242);
-	
-	var List = React.createClass({
-	  displayName: 'List',
-	
-	  getInitialState: function () {
-	    return {
-	      currentUser: SessionStore.returnCurrentUser(),
-	      currentList: ListStore.returnCurrentList(),
-	      listings: []
-	    };
-	  },
-	  componentWillMount: function () {
-	    this.listListener = ListStore.addListener(this._handleCurrentList);
-	    this.listingListener = ListingStore.addListener(this._handleListings);
-	    if (this.state.currentList) {
-	      ListingActions.fetchListingsNoBoundaries(this.state.currentList.id);
-	    }
-	  },
-	  componentWillUnmount: function () {
-	    this.listListener.remove();
-	    this.listingListener.remove();
-	  },
-	  _handleCurrentList: function () {
-	    this.setState({
-	      currentList: ListStore.returnCurrentList()
-	    });
-	    if (this.state.currentList) {
-	      ListingActions.fetchListingsNoBoundaries(this.state.currentList.id);
-	    }
-	  },
-	  _handleListings: function () {
-	    this.setState({
-	      listings: ListingStore.all()
-	    });
-	  },
-	  returnListings: function () {
-	    var listings = this.state.listings.map(function (listing) {
-	      return React.createElement(ListItem, { key: listing.id, listing: listing });
-	    });
-	    return listings;
-	  },
-	  render: function () {
-	    var listings = this.returnListings();
-	    return React.createElement(
-	      'ul',
-	      { className: 'list-ul' },
-	      listings
-	    );
-	  }
-	});
-	
-	module.exports = List;
-
-/***/ },
-/* 246 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	
-	var ListItem = React.createClass({
-	  displayName: "ListItem",
-	
-	  returnListItem: function () {
-	    var listing = this.props.listing;
-	    var formattedListing = React.createElement(
-	      "div",
-	      null,
-	      React.createElement(
-	        "h3",
-	        { className: "listing-title" },
-	        listing.name
-	      ),
-	      React.createElement(
-	        "p",
-	        { className: "listing-text" },
-	        listing.description
-	      )
-	    );
-	    return formattedListing;
-	  },
-	  render: function () {
-	    var formattedListing = this.returnListItem();
-	    return React.createElement(
-	      "li",
-	      null,
-	      formattedListing
-	    );
-	  }
-	});
-	
-	module.exports = ListItem;
-
-/***/ },
-/* 247 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppDispatcher = __webpack_require__(218);
-	var ListServerApi = __webpack_require__(249);
-	
-	var ListActions = {
-	
-	  // ======INBOUND
-	  receiveLists: function (lists) {
-	    AppDispatcher.dispatch({
-	      actionType: "LISTS_RECEIVED",
-	      lists: lists
-	    });
-	  },
-	
-	  receiveCurrentList: function (list) {
-	    AppDispatcher.dispatch({
-	      actionType: "CURRENT_LIST",
-	      list: list
-	    });
-	  },
-	
-	  // ======OUTBOUND
-	  getUserLists: function (userId) {
-	    ListServerApi.fetchLists(userId, ListActions.receiveLists);
-	  },
-	
-	  setCurrentList: function (listId) {
-	    ListServerApi.setCurrentList(listId, ListActions.receiveCurrentList);
-	  }
-	
-	};
-	
-	module.exports = ListActions;
-
-/***/ },
-/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var AppDispatcher = __webpack_require__(218);
@@ -32339,12 +32197,68 @@
 	module.exports = ListStore;
 
 /***/ },
-/* 249 */
+/* 246 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var ErrorActions = __webpack_require__(243);
+	var AppDispatcher = __webpack_require__(218);
+	var ListServerApi = __webpack_require__(247);
+	
+	var ListActions = {
+	
+	  // ======INBOUND
+	  receiveLists: function (lists) {
+	    AppDispatcher.dispatch({
+	      actionType: "LISTS_RECEIVED",
+	      lists: lists
+	    });
+	  },
+	
+	  receiveCurrentList: function (list) {
+	    AppDispatcher.dispatch({
+	      actionType: "CURRENT_LIST",
+	      list: list
+	    });
+	  },
+	
+	  // ======OUTBOUND
+	  getUserLists: function (userId) {
+	    ListServerApi.fetchLists(userId, ListActions.receiveLists);
+	  },
+	
+	  setCurrentList: function (listId) {
+	    ListServerApi.setCurrentList(listId, ListActions.receiveCurrentList);
+	  },
+	
+	  addList: function (listParams) {
+	    ListServerApi.addList(listParams, ListActions.receiveLists);
+	  }
+	
+	};
+	
+	module.exports = ListActions;
+
+/***/ },
+/* 247 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var ErrorActions = __webpack_require__(239);
 	
 	var ListServerApi = {
+	  addList: function (listParams, callback) {
+	    $.ajax({
+	      url: "api/lists",
+	      type: "POST",
+	      data: listParams,
+	      success: function (data) {
+	        callback(data);
+	      },
+	      error: function (response) {
+	        var error = JSON.parse(response.responseText).errors;
+	        ErrorActions.sendError(error);
+	      }
+	    });
+	  },
+	
 	  fetchLists: function (userId, callback) {
 	    $.ajax({
 	      url: "api/lists",
@@ -32378,11 +32292,115 @@
 	module.exports = ListServerApi;
 
 /***/ },
+/* 248 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var SessionStore = __webpack_require__(217);
+	var ListingStore = __webpack_require__(242);
+	var AuthActions = __webpack_require__(237);
+	var ListingActions = __webpack_require__(243);
+	var ListItem = __webpack_require__(249);
+	var ListStore = __webpack_require__(245);
+	var ListingStore = __webpack_require__(242);
+	
+	var List = React.createClass({
+	  displayName: 'List',
+	
+	  getInitialState: function () {
+	    return {
+	      currentUser: SessionStore.returnCurrentUser(),
+	      currentList: ListStore.returnCurrentList(),
+	      listings: []
+	    };
+	  },
+	  componentWillMount: function () {
+	    this.listListener = ListStore.addListener(this._handleCurrentList);
+	    this.listingListener = ListingStore.addListener(this._handleListings);
+	    if (this.state.currentList) {
+	      ListingActions.fetchListingsNoBoundaries(this.state.currentList.id);
+	    }
+	  },
+	  componentWillUnmount: function () {
+	    this.listListener.remove();
+	    this.listingListener.remove();
+	  },
+	  _handleCurrentList: function () {
+	    this.setState({
+	      currentList: ListStore.returnCurrentList()
+	    });
+	    if (this.state.currentList) {
+	      ListingActions.fetchListingsNoBoundaries(this.state.currentList.id);
+	    }
+	  },
+	  _handleListings: function () {
+	    this.setState({
+	      listings: ListingStore.all()
+	    });
+	  },
+	  returnListings: function () {
+	    var listings = this.state.listings.map(function (listing) {
+	      return React.createElement(ListItem, { key: listing.id, listing: listing });
+	    });
+	    return listings;
+	  },
+	  render: function () {
+	    var listings = this.returnListings();
+	    return React.createElement(
+	      'ul',
+	      { className: 'list-ul' },
+	      listings
+	    );
+	  }
+	});
+	
+	module.exports = List;
+
+/***/ },
+/* 249 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	
+	var ListItem = React.createClass({
+	  displayName: "ListItem",
+	
+	  returnListItem: function () {
+	    var listing = this.props.listing;
+	    var formattedListing = React.createElement(
+	      "div",
+	      null,
+	      React.createElement(
+	        "h3",
+	        { className: "listing-title" },
+	        listing.name
+	      ),
+	      React.createElement(
+	        "p",
+	        { className: "listing-text" },
+	        listing.description
+	      )
+	    );
+	    return formattedListing;
+	  },
+	  render: function () {
+	    var formattedListing = this.returnListItem();
+	    return React.createElement(
+	      "li",
+	      null,
+	      formattedListing
+	    );
+	  }
+	});
+	
+	module.exports = ListItem;
+
+/***/ },
 /* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var ListStore = __webpack_require__(248);
+	var ListStore = __webpack_require__(245);
 	var AddItem = __webpack_require__(251);
 	var AddList = __webpack_require__(252);
 	
@@ -32455,40 +32473,57 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var ListingActions = __webpack_require__(244);
+	var ListingActions = __webpack_require__(243);
 	var SessionStore = __webpack_require__(217);
+	var ErrorHandler = __webpack_require__(253);
 	
 	var AddItem = React.createClass({
 	  displayName: 'AddItem',
 	
 	  getInitialState: function () {
 	    return {
-	      currentUser: SessionStore.returnCurrentUser(),
 	      currentList: this.props.list,
 	      name: "",
 	      description: "",
-	      lat: "",
-	      lng: ""
+	      howBadWannaGo: "",
+	      city: ""
 	    };
 	  },
 	  handleInputChanges: function (e) {
 	    e.preventDefault();
 	    this.setState({ [e.target.name]: e.target.value });
 	  },
+	
 	  handleSubmits: function (e) {
 	    e.preventDefault();
+	    var errors = [];
 	
-	    var listingParams = {
-	      listing: {
-	        list_id: this.state.currentList.id,
-	        name: this.state.name,
-	        description: this.state.description,
-	        lat: this.state.lat,
-	        lng: this.state.lng
+	    for (var prop in this.state) {
+	      if (this.state.hasOwnProperty && prop != "description") {
+	        if (prop === "currentList" && this.state[prop] === null) {
+	          errors.push("Please select a list from the dropdown first!");
+	        } else if (this.state[prop].length === 0) {
+	          errors.push("The field for " + prop + " can't be left blank, sorry!");
+	        }
 	      }
-	    };
+	    }
 	
-	    ListingActions.addListing(listingParams);
+	    if (errors.length > 0) {
+	      ErrorHandler.sendError(errors);
+	    } else {
+	
+	      var listingParams = {
+	        listing: {
+	          list_id: this.state.currentList.id,
+	          name: this.state.name,
+	          description: this.state.description,
+	          city: this.state.city,
+	          how_bad_wanna_go: this.state.howBadWannaGo
+	        }
+	      };
+	
+	      ListingActions.addListing(listingParams);
+	    }
 	  },
 	  render: function () {
 	    return React.createElement(
@@ -32507,7 +32542,7 @@
 	          null,
 	          React.createElement(
 	            'label',
-	            null,
+	            { htmlFor: 'name' },
 	            'Name of Activity/Place'
 	          ),
 	          React.createElement('br', null),
@@ -32522,7 +32557,7 @@
 	          null,
 	          React.createElement(
 	            'label',
-	            null,
+	            { htmlFor: 'description' },
 	            'A Short Description'
 	          ),
 	          React.createElement('br', null),
@@ -32530,7 +32565,7 @@
 	            className: 'login-text-input',
 	            placeholder: 'Place with amazing pho...',
 	            name: 'description',
-	            value: this.state.password,
+	            value: this.state.description,
 	            onChange: this.handleInputChanges })
 	        ),
 	        React.createElement(
@@ -32538,15 +32573,14 @@
 	          null,
 	          React.createElement(
 	            'label',
-	            null,
-	            'Latitude'
+	            { htmlFor: 'city' },
+	            'City (Important for Search!)'
 	          ),
 	          React.createElement('br', null),
 	          React.createElement('input', { type: 'text',
 	            className: 'login-text-input',
-	            placeholder: 'this is for testing...',
-	            name: 'lat',
-	            value: this.state.password,
+	            name: 'city',
+	            value: this.state.city,
 	            onChange: this.handleInputChanges })
 	        ),
 	        React.createElement(
@@ -32554,15 +32588,14 @@
 	          null,
 	          React.createElement(
 	            'label',
-	            null,
-	            'Longitude'
+	            { htmlFor: 'howBadWannaGo' },
+	            'How Bad Do You Wanna Go? (1-5)'
 	          ),
 	          React.createElement('br', null),
-	          React.createElement('input', { type: 'text',
+	          React.createElement('input', { type: 'integer',
 	            className: 'login-text-input',
-	            placeholder: 'this is for testing...',
-	            name: 'lng',
-	            value: this.state.password,
+	            name: 'howBadWannaGo',
+	            value: this.state.howBadWannaGo,
 	            onChange: this.handleInputChanges })
 	        ),
 	        React.createElement('input', { type: 'submit',
@@ -32570,7 +32603,11 @@
 	          value: 'add it!',
 	          onClick: this.handleSubmits })
 	      ),
-	      React.createElement('div', { className: 'errorHandler' })
+	      React.createElement(
+	        'div',
+	        { className: 'errorHandler' },
+	        React.createElement(ErrorHandler, null)
+	      )
 	    );
 	  }
 	});
@@ -32582,20 +32619,164 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
+	var SessionStore = __webpack_require__(217);
+	var ErrorHandler = __webpack_require__(253);
+	var ListActions = __webpack_require__(246);
+	var AuthActions = __webpack_require__(237);
 	
 	var AddList = React.createClass({
 	  displayName: 'AddList',
 	
+	  getInitialState: function () {
+	    return {
+	      name: ""
+	    };
+	  },
+	  handleInputChanges: function (e) {
+	    e.preventDefault();
+	    this.setState({ [e.target.name]: e.target.value });
+	  },
+	
+	  handleSubmits: function (e) {
+	    e.preventDefault();
+	    if (this.state.name.length === 0) {
+	      ErrorHandler.sendError(['Please give this poor list a name!']);
+	    } else {
+	
+	      var listParams = {
+	        list: {
+	          name: this.state.name
+	        }
+	      };
+	
+	      ListActions.addList(listParams);
+	    }
+	  },
 	  render: function () {
 	    return React.createElement(
 	      'div',
-	      null,
-	      'Hi!'
+	      { className: 'list-form' },
+	      React.createElement(
+	        'form',
+	        null,
+	        React.createElement(
+	          'h1',
+	          null,
+	          'add a new list!'
+	        ),
+	        React.createElement(
+	          'div',
+	          null,
+	          React.createElement(
+	            'label',
+	            { htmlFor: 'name' },
+	            'New List Name'
+	          ),
+	          React.createElement('br', null),
+	          React.createElement('input', { type: 'text',
+	            className: 'login-text-input',
+	            name: 'name',
+	            value: this.state.name,
+	            onChange: this.handleInputChanges })
+	        ),
+	        React.createElement(
+	          'div',
+	          null,
+	          React.createElement('input', { type: 'submit',
+	            className: 'main-button secondary-color',
+	            value: 'add it!',
+	            onClick: this.handleSubmits })
+	        )
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'errorHandler' },
+	        React.createElement(ErrorHandler, null)
+	      )
 	    );
 	  }
 	});
 	
 	module.exports = AddList;
+
+/***/ },
+/* 253 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ErrorStore = __webpack_require__(254);
+	
+	var ErrorHandler = React.createClass({
+	  displayName: 'ErrorHandler',
+	
+	  getInitialState: function () {
+	    return {
+	      errors: []
+	    };
+	  },
+	  componentDidMount: function () {
+	    this.errorListener = ErrorStore.addListener(this._onChange);
+	    this.setState({
+	      errors: this.props.prebakedErrors ? this.props.prebakedErrors : []
+	    });
+	  },
+	  _onChange: function () {
+	    var messages = ErrorStore.all();
+	    this.setState({ errors: messages });
+	  },
+	  componentWillUnmount: function () {
+	    this.errorListener.remove();
+	  },
+	  render: function () {
+	    var errors = this.state.errors.map(function (err, idx) {
+	      return React.createElement(
+	        'li',
+	        { className: 'error', key: idx },
+	        err
+	      );
+	    });
+	    return React.createElement(
+	      'ul',
+	      { style: { margin: "0" } },
+	      errors
+	    );
+	  }
+	});
+	
+	module.exports = ErrorHandler;
+
+/***/ },
+/* 254 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(218);
+	var Store = __webpack_require__(222).Store;
+	
+	var _errors = [];
+	
+	var ErrorStore = new Store(AppDispatcher);
+	
+	function setErrors(errors) {
+	  _errors = errors;
+	}
+	
+	ErrorStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	    case "DISPLAY_ERRORS":
+	      setErrors(payload.errors);
+	      this.__emitChange();
+	      break;
+	    case "RESET_ERRORS":
+	      setErrors([]);
+	      this.__emitChange();
+	  }
+	};
+	
+	ErrorStore.all = function () {
+	  return _errors.slice();
+	};
+	
+	module.exports = ErrorStore;
 
 /***/ }
 /******/ ]);

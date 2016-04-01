@@ -1,38 +1,55 @@
 var React = require('react');
 var ListingActions = require('../actions/listingActions');
 var SessionStore = require('../stores/sessionStore');
+var ErrorHandler = require('./errorHandler');
 
 var AddItem = React.createClass({
   getInitialState: function() {
     return {
-      currentUser: SessionStore.returnCurrentUser(),
       currentList: this.props.list,
       name: "",
       description: "",
-      lat: "",
-      lng: ""
+      howBadWannaGo: "",
+      city: ""
     };
   },
   handleInputChanges: function(e){
     e.preventDefault();
     this.setState({[e.target.name]: e.target.value});
   },
+
   handleSubmits: function(e){
   e.preventDefault();
+  var errors = [];
 
+  for (var prop in this.state) {
+    if (this.state.hasOwnProperty && prop != "description") {
+      if (prop === "currentList" && this.state[prop] === null) {
+        errors.push("Please select a list from the dropdown first!");
+      } else if (this.state[prop].length === 0) {
+        errors.push("The field for " + prop + " can't be left blank, sorry!");
+      }
+    }
+  }
 
-  var listingParams =
-    {
-      listing: {
-              list_id: this.state.currentList.id,
-              name: this.state.name,
-              description: this.state.description,
-              lat: this.state.lat,
-              lng: this.state.lng
-          }
-    };
+  if (errors.length > 0) {
+    ErrorHandler.sendError(errors)
+  } else {
+
+    var listingParams =
+      {
+        listing: {
+                list_id: this.state.currentList.id,
+                name: this.state.name,
+                description: this.state.description,
+                city: this.state.city,
+                how_bad_wanna_go: this.state.howBadWannaGo
+            }
+      };
 
     ListingActions.addListing(listingParams);
+  }
+
   },
   render: function(){
     return (
@@ -40,7 +57,7 @@ var AddItem = React.createClass({
         <form>
           <h1>add it to the list!</h1>
           <div>
-            <label>Name of Activity/Place</label><br />
+            <label htmlFor="name">Name of Activity/Place</label><br />
             <input type="text"
                     className="login-text-input"
                     name="name"
@@ -48,30 +65,28 @@ var AddItem = React.createClass({
                     onChange={this.handleInputChanges}/>
           </div>
           <div>
-            <label>A Short Description</label><br />
+            <label htmlFor="description">A Short Description</label><br />
             <input type="text"
                     className="login-text-input"
                     placeholder="Place with amazing pho..."
                     name="description"
-                    value={this.state.password}
+                    value={this.state.description}
                     onChange={this.handleInputChanges}/>
           </div>
           <div>
-            <label>Latitude</label><br />
+            <label htmlFor="city">City (Important for Search!)</label><br />
             <input type="text"
                     className="login-text-input"
-                    placeholder="this is for testing..."
-                    name="lat"
-                    value={this.state.password}
+                    name="city"
+                    value={this.state.city}
                     onChange={this.handleInputChanges}/>
           </div>
           <div>
-            <label>Longitude</label><br />
-            <input type="text"
+            <label htmlFor="howBadWannaGo">How Bad Do You Wanna Go? (1-5)</label><br />
+            <input type="integer"
                     className="login-text-input"
-                    placeholder="this is for testing..."
-                    name="lng"
-                    value={this.state.password}
+                    name="howBadWannaGo"
+                    value={this.state.howBadWannaGo}
                     onChange={this.handleInputChanges}/>
           </div>
             <input type="submit"
@@ -80,6 +95,7 @@ var AddItem = React.createClass({
                     onClick={this.handleSubmits} />
         </form>
         <div className="errorHandler">
+          <ErrorHandler />
         </div>
       </div>
     );

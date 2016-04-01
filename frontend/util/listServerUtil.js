@@ -1,6 +1,21 @@
 var ErrorActions = require('../actions/errorActions');
 
 var ListServerApi = {
+  addList: function(listParams, callback) {
+    $.ajax({
+      url: "api/lists",
+      type: "POST",
+      data: listParams,
+      success: function(data){
+          callback(data);
+        },
+      error: function(response){
+          var error = JSON.parse(response.responseText).errors;
+          ErrorActions.sendError(error);
+        }
+    });
+  },
+
   fetchLists: function(userId, callback){
     $.ajax({
     url: "api/lists",

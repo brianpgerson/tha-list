@@ -25,6 +25,10 @@ var ListActions = {
 
   setCurrentList: function(listId) {
     ListServerApi.setCurrentList(listId, ListActions.receiveCurrentList);
+  },
+
+  addList: function(listParams) {
+    ListServerApi.addList(listParams, ListActions.receiveLists);
   }
 
 };

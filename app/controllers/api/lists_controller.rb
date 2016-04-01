@@ -6,6 +6,7 @@ class Api::ListsController < ApplicationController
 
   def create
     @list = List.new(list_params)
+    @list['owner_id'] = current_user.id
     if @list.save
       render :show
     else
@@ -40,7 +41,7 @@ class Api::ListsController < ApplicationController
   private
 
   def list_params
-    params.require(:list).permit(:name, :description, :subscriber_ids)
+    params.require(:list).permit(:name, :subscriber_ids)
   end
 
 end
