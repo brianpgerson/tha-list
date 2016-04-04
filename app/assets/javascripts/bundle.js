@@ -55,13 +55,20 @@
 	var Login = __webpack_require__(240);
 	var Map = __webpack_require__(241);
 	var Add = __webpack_require__(250);
+	var AddList = __webpack_require__(252);
+	var AddItem = __webpack_require__(251);
 	
 	var routes = React.createElement(
 	  Route,
 	  { component: App, path: '/' },
 	  React.createElement(Route, { component: Map, path: 'map' }),
 	  React.createElement(Route, { component: List, path: 'list' }),
-	  React.createElement(Route, { component: Add, path: 'add' })
+	  React.createElement(
+	    Route,
+	    { component: Add, path: 'add' },
+	    React.createElement(Route, { component: AddItem, path: 'newitem' }),
+	    React.createElement(Route, { component: AddList, path: 'newlist' })
+	  )
 	);
 	
 	document.addEventListener('DOMContentLoaded', function () {
@@ -32150,8 +32157,8 @@
 	var _lists = {};
 	var _currentList = null;
 	
-	function resetList(listing) {
-	  _lists[listing.id] = listing;
+	function resetList(list) {
+	  _lists[list.id] = list;
 	}
 	
 	function resetLists(lists) {
@@ -32167,6 +32174,11 @@
 	
 	ListStore.__onDispatch = function (payload) {
 	  switch (payload.actionType) {
+	    case "RECEIVE_AND_SET":
+	      resetList(payload.list);
+	      setCurrent(payload.list);
+	      this.__emitChange();
+	      break;
 	    case "LISTS_RECEIVED":
 	      resetLists(payload.lists);
 	      this.__emitChange();
@@ -32206,6 +32218,13 @@
 	var ListActions = {
 	
 	  // ======INBOUND
+	  receiveAndSetCurrent: function (list) {
+	    AppDispatcher.dispatch({
+	      actionType: "RECEIVE_AND_SET",
+	      list: list
+	    });
+	  },
+	
 	  receiveLists: function (lists) {
 	    AppDispatcher.dispatch({
 	      actionType: "LISTS_RECEIVED",
@@ -32230,7 +32249,7 @@
 	  },
 	
 	  addList: function (listParams) {
-	    ListServerApi.addList(listParams, ListActions.receiveLists);
+	    ListServerApi.addList(listParams, ListActions.receiveAndSetCurrent);
 	  }
 	
 	};
@@ -32413,6 +32432,11 @@
 	      currentList: ListStore.returnCurrentList()
 	    };
 	  },
+	
+	  contextTypes: {
+	    router: React.PropTypes.object.isRequired
+	  },
+	
 	  componentWillMount: function () {
 	    this.listStoreListener = ListStore.addListener(this._handleCurrentList);
 	  },
@@ -32425,14 +32449,10 @@
 	    });
 	  },
 	  _handleList: function () {
-	    this.setState({
-	      whatToAdd: "list"
-	    });
+	    this.context.router.push("newlist");
 	  },
 	  _handleItem: function () {
-	    this.setState({
-	      whatToAdd: "item"
-	    });
+	    this.context.router.push("newitem");
 	  },
 	  renderOptions: function () {
 	    var renderOps;
@@ -32452,7 +32472,7 @@
 	        'New Item'
 	      )
 	    );else {
-	      renderOps = this.state.whatToAdd === "item" ? React.createElement(AddItem, { list: this.state.currentList }) : React.createElement(AddList, null);
+	      renderOps = React.createElement('div', null);
 	    }
 	    return renderOps;
 	  },
@@ -32461,7 +32481,8 @@
 	    return React.createElement(
 	      'div',
 	      null,
-	      renderOps
+	      renderOps,
+	      this.props.children
 	    );
 	  }
 	});
@@ -32632,6 +32653,11 @@
 	      name: ""
 	    };
 	  },
+	
+	  contextTypes: {
+	    router: React.PropTypes.object.isRequired
+	  },
+	
 	  handleInputChanges: function (e) {
 	    e.preventDefault();
 	    this.setState({ [e.target.name]: e.target.value });
@@ -32648,8 +32674,8 @@
 	          name: this.state.name
 	        }
 	      };
-	
 	      ListActions.addList(listParams);
+	      this.context.router.push("add");
 	    }
 	  },
 	  render: function () {

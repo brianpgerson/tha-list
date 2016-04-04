@@ -10,6 +10,11 @@ var Add = React.createClass({
       currentList: ListStore.returnCurrentList(),
     };
   },
+
+  contextTypes: {
+    router: React.PropTypes.object.isRequired
+  },
+
   componentWillMount: function() {
     this.listStoreListener = ListStore.addListener(this._handleCurrentList);
   },
@@ -22,14 +27,10 @@ var Add = React.createClass({
     });
   },
   _handleList: function() {
-    this.setState({
-      whatToAdd: "list"
-    });
+    this.context.router.push("newlist");
   },
   _handleItem: function() {
-    this.setState({
-      whatToAdd: "item"
-    });
+    this.context.router.push("newitem");
   },
   renderOptions: function() {
     var renderOps;
@@ -43,8 +44,8 @@ var Add = React.createClass({
       </div>
     );
     else {
-      renderOps = this.state.whatToAdd === "item" ?
-        <AddItem list={this.state.currentList}/> : <AddList />;
+      renderOps = <div></div>;
+
     }
     return renderOps;
   },
@@ -53,6 +54,7 @@ var Add = React.createClass({
     return (
       <div>
         {renderOps}
+        {this.props.children}
       </div>
     );
   }

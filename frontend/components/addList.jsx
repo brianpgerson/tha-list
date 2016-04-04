@@ -10,6 +10,11 @@ var AddList = React.createClass({
       name: ""
     };
   },
+
+  contextTypes: {
+    router: React.PropTypes.object.isRequired
+  },
+
   handleInputChanges: function(e){
     e.preventDefault();
     this.setState({[e.target.name]: e.target.value});
@@ -27,8 +32,8 @@ var AddList = React.createClass({
                 name: this.state.name
             }
       };
-
     ListActions.addList(listParams);
+    this.context.router.push("add");
   }
 
   },

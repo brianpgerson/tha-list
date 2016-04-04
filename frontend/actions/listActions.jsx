@@ -4,6 +4,13 @@ var ListServerApi = require('../util/listServerUtil');
 var ListActions = {
 
   // ======INBOUND
+  receiveAndSetCurrent: function(list){
+    AppDispatcher.dispatch({
+      actionType: "RECEIVE_AND_SET",
+      list: list
+    });
+  },
+
   receiveLists: function(lists) {
     AppDispatcher.dispatch({
       actionType: "LISTS_RECEIVED",
@@ -28,7 +35,7 @@ var ListActions = {
   },
 
   addList: function(listParams) {
-    ListServerApi.addList(listParams, ListActions.receiveLists);
+    ListServerApi.addList(listParams, ListActions.receiveAndSetCurrent);
   }
 
 };

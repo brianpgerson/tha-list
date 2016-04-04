@@ -5,8 +5,8 @@ var ListStore = new Store(AppDispatcher);
 var _lists = {};
 var _currentList = null;
 
-function resetList(listing) {
-  _lists[listing.id] = listing;
+function resetList(list) {
+  _lists[list.id] = list;
 }
 
 function resetLists(lists) {
@@ -22,6 +22,11 @@ function setCurrent(list) {
 
 ListStore.__onDispatch = function(payload) {
   switch(payload.actionType) {
+    case "RECEIVE_AND_SET":
+      resetList(payload.list);
+      setCurrent(payload.list);
+      this.__emitChange();
+      break;
     case "LISTS_RECEIVED":
       resetLists(payload.lists);
       this.__emitChange();
