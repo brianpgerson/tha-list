@@ -55,19 +55,19 @@
 	var Login = __webpack_require__(240);
 	var Map = __webpack_require__(241);
 	var Add = __webpack_require__(250);
-	var AddList = __webpack_require__(252);
+	var AddList = __webpack_require__(254);
 	var AddItem = __webpack_require__(251);
 	
 	var routes = React.createElement(
 	  Route,
-	  { component: App, path: '/' },
-	  React.createElement(Route, { component: Map, path: 'map' }),
-	  React.createElement(Route, { component: List, path: 'list' }),
+	  { path: '/', component: App },
+	  React.createElement(Route, { path: 'map', component: Map }),
+	  React.createElement(Route, { path: 'list', component: List }),
 	  React.createElement(
 	    Route,
-	    { component: Add, path: 'add' },
-	    React.createElement(Route, { component: AddItem, path: 'newitem' }),
-	    React.createElement(Route, { component: AddList, path: 'newlist' })
+	    { path: 'add', component: Add },
+	    React.createElement(Route, { path: 'newitem', component: AddItem }),
+	    React.createElement(Route, { path: 'newlist', component: AddList })
 	  )
 	);
 	
@@ -24819,7 +24819,9 @@
 	  },
 	  _handleListChange: function (e) {
 	    e.preventDefault();
-	    if (parseInt(e.target.value) > 0) {
+	    if (e.target.value === "add") {
+	      this.context.router.push("add/newlist");
+	    } else if (parseInt(e.target.value) > 0) {
 	      ListActions.setCurrentList(parseInt(e.target.value));
 	    }
 	  },
@@ -24844,22 +24846,16 @@
 	          'Add'
 	        )
 	      );
-	    } else {
-	      return React.createElement(
-	        'h2',
-	        null,
-	        'Please Select a List'
-	      );
 	    }
 	  },
 	  loginOrButtons: function () {
 	    if (this.state.loggedIn === true) {
 	      var allUsersLists = this.returnUsersLists();
-	      if (allUsersLists[0] === undefined) {
-	        var userLists = React.createElement(
-	          'h2',
-	          null,
-	          'Add a New List!'
+	      if (allUsersLists[1] !== undefined) {
+	        lists = React.createElement(
+	          'option',
+	          { value: 'add' },
+	          'Add New List'
 	        );
 	      } else {
 	        var lists = allUsersLists.map(function (list) {
@@ -24869,20 +24865,26 @@
 	            this._upperCaseIt(list.name)
 	          );
 	        }.bind(this));
-	        userLists = React.createElement(
-	          'select',
-	          { className: 'list-selector',
-	            defaultValue: 'default',
-	            name: 'lists',
-	            onChange: this._handleListChange },
-	          React.createElement(
-	            'option',
-	            { value: 'default' },
-	            'Select a List'
-	          ),
-	          lists
-	        );
+	        lists.unshift(React.createElement(
+	          'option',
+	          { key: 'add', value: 'add' },
+	          'Add New List'
+	        ));
+	        debugger;
 	      }
+	      var userLists = React.createElement(
+	        'select',
+	        { className: 'list-selector',
+	          defaultValue: 'default',
+	          name: 'lists',
+	          onChange: this._handleListChange },
+	        React.createElement(
+	          'option',
+	          { value: 'default' },
+	          'Select or Add a List'
+	        ),
+	        lists
+	      );
 	      return React.createElement(
 	        'div',
 	        { className: 'main-buttons-container group' },
@@ -32421,7 +32423,7 @@
 	var React = __webpack_require__(1);
 	var ListStore = __webpack_require__(245);
 	var AddItem = __webpack_require__(251);
-	var AddList = __webpack_require__(252);
+	var AddList = __webpack_require__(254);
 	
 	var Add = React.createClass({
 	  displayName: 'Add',
@@ -32449,10 +32451,10 @@
 	    });
 	  },
 	  _handleList: function () {
-	    this.context.router.push("newlist");
+	    this.context.router.push("add/newlist");
 	  },
 	  _handleItem: function () {
-	    this.context.router.push("newitem");
+	    this.context.router.push("add/newitem");
 	  },
 	  renderOptions: function () {
 	    var renderOps;
@@ -32496,7 +32498,7 @@
 	var React = __webpack_require__(1);
 	var ListingActions = __webpack_require__(243);
 	var SessionStore = __webpack_require__(217);
-	var ErrorHandler = __webpack_require__(253);
+	var ErrorHandler = __webpack_require__(252);
 	
 	var AddItem = React.createClass({
 	  displayName: 'AddItem',
@@ -32640,8 +32642,87 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
+	var ErrorStore = __webpack_require__(253);
+	
+	var ErrorHandler = React.createClass({
+	  displayName: 'ErrorHandler',
+	
+	  getInitialState: function () {
+	    return {
+	      errors: []
+	    };
+	  },
+	  componentDidMount: function () {
+	    this.errorListener = ErrorStore.addListener(this._onChange);
+	    this.setState({
+	      errors: this.props.prebakedErrors ? this.props.prebakedErrors : []
+	    });
+	  },
+	  _onChange: function () {
+	    var messages = ErrorStore.all();
+	    this.setState({ errors: messages });
+	  },
+	  componentWillUnmount: function () {
+	    this.errorListener.remove();
+	  },
+	  render: function () {
+	    var errors = this.state.errors.map(function (err, idx) {
+	      return React.createElement(
+	        'li',
+	        { className: 'error', key: idx },
+	        err
+	      );
+	    });
+	    return React.createElement(
+	      'ul',
+	      { style: { margin: "0" } },
+	      errors
+	    );
+	  }
+	});
+	
+	module.exports = ErrorHandler;
+
+/***/ },
+/* 253 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(218);
+	var Store = __webpack_require__(222).Store;
+	
+	var _errors = [];
+	
+	var ErrorStore = new Store(AppDispatcher);
+	
+	function setErrors(errors) {
+	  _errors = errors;
+	}
+	
+	ErrorStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	    case "DISPLAY_ERRORS":
+	      setErrors(payload.errors);
+	      this.__emitChange();
+	      break;
+	    case "RESET_ERRORS":
+	      setErrors([]);
+	      this.__emitChange();
+	  }
+	};
+	
+	ErrorStore.all = function () {
+	  return _errors.slice();
+	};
+	
+	module.exports = ErrorStore;
+
+/***/ },
+/* 254 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
 	var SessionStore = __webpack_require__(217);
-	var ErrorHandler = __webpack_require__(253);
+	var ErrorHandler = __webpack_require__(252);
 	var ListActions = __webpack_require__(246);
 	var AuthActions = __webpack_require__(237);
 	
@@ -32724,85 +32805,6 @@
 	});
 	
 	module.exports = AddList;
-
-/***/ },
-/* 253 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var ErrorStore = __webpack_require__(254);
-	
-	var ErrorHandler = React.createClass({
-	  displayName: 'ErrorHandler',
-	
-	  getInitialState: function () {
-	    return {
-	      errors: []
-	    };
-	  },
-	  componentDidMount: function () {
-	    this.errorListener = ErrorStore.addListener(this._onChange);
-	    this.setState({
-	      errors: this.props.prebakedErrors ? this.props.prebakedErrors : []
-	    });
-	  },
-	  _onChange: function () {
-	    var messages = ErrorStore.all();
-	    this.setState({ errors: messages });
-	  },
-	  componentWillUnmount: function () {
-	    this.errorListener.remove();
-	  },
-	  render: function () {
-	    var errors = this.state.errors.map(function (err, idx) {
-	      return React.createElement(
-	        'li',
-	        { className: 'error', key: idx },
-	        err
-	      );
-	    });
-	    return React.createElement(
-	      'ul',
-	      { style: { margin: "0" } },
-	      errors
-	    );
-	  }
-	});
-	
-	module.exports = ErrorHandler;
-
-/***/ },
-/* 254 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppDispatcher = __webpack_require__(218);
-	var Store = __webpack_require__(222).Store;
-	
-	var _errors = [];
-	
-	var ErrorStore = new Store(AppDispatcher);
-	
-	function setErrors(errors) {
-	  _errors = errors;
-	}
-	
-	ErrorStore.__onDispatch = function (payload) {
-	  switch (payload.actionType) {
-	    case "DISPLAY_ERRORS":
-	      setErrors(payload.errors);
-	      this.__emitChange();
-	      break;
-	    case "RESET_ERRORS":
-	      setErrors([]);
-	      this.__emitChange();
-	  }
-	};
-	
-	ErrorStore.all = function () {
-	  return _errors.slice();
-	};
-	
-	module.exports = ErrorStore;
 
 /***/ }
 /******/ ]);

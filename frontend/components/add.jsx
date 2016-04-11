@@ -27,10 +27,10 @@ var Add = React.createClass({
     });
   },
   _handleList: function() {
-    this.context.router.push("newlist");
+    this.context.router.push("add/newlist");
   },
   _handleItem: function() {
-    this.context.router.push("newitem");
+    this.context.router.push("add/newitem");
   },
   renderOptions: function() {
     var renderOps;

@@ -13,12 +13,12 @@ var AddList = require('./components/addList');
 var AddItem = require('./components/addItem');
 
 var routes = (
-  <Route component={App} path="/">
-    <Route component={Map} path="map"></Route>
-    <Route component={List} path="list"></Route>
-    <Route component={Add} path="add">
-      <Route component={AddItem} path="newitem" />
-      <Route component={AddList} path="newlist" />
+  <Route path="/" component={App}>
+    <Route path="map" component={Map} />
+    <Route path="list" component={List} />
+    <Route path="add" component={Add}>
+      <Route path="newitem" component={AddItem} />
+      <Route path="newlist" component={AddList} />
     </Route>
   </Route>
 );

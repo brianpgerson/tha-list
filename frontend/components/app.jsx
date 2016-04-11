@@ -67,7 +67,9 @@ var App = React.createClass({
   },
   _handleListChange: function(e){
     e.preventDefault();
-    if (parseInt(e.target.value) > 0) {
+    if (e.target.value === "add") {
+      this.context.router.push("add/newlist");
+    } else if (parseInt(e.target.value) > 0) {
       ListActions.setCurrentList(parseInt(e.target.value));
     }
   },
@@ -80,29 +82,29 @@ var App = React.createClass({
           <button className="main-button" onClick={this._handleAddClick}>Add</button>
         </div>
       );
-    } else {
-      return <h2>Please Select a List</h2>;
     }
   },
   loginOrButtons: function() {
     if (this.state.loggedIn === true) {
       var allUsersLists = this.returnUsersLists();
-      if (allUsersLists[0] === undefined) {
-        var userLists = <h2>Add a New List!</h2>;
+      if (allUsersLists[1] !== undefined) {
+        lists = <option value="add">Add New List</option>;
       } else {
         var lists = allUsersLists.map(function(list){
           return <option key={list.id} value={list.id}>{this._upperCaseIt(list.name)}</option>;
-          }.bind(this));
-        userLists = (
-          <select className="list-selector"
-                  defaultValue="default"
-                  name="lists"
-                  onChange={this._handleListChange}>
-            <option value="default">Select a List</option>
-            {lists}
-          </select>
-        );
+        }.bind(this));
+        lists.unshift(<option key="add" value="add">Add New List</option>);
+        debugger;
       }
+      var userLists = (
+        <select className="list-selector"
+                defaultValue="default"
+                name="lists"
+                onChange={this._handleListChange}>
+          <option value="default">Select or Add a List</option>
+          {lists}
+        </select>
+      );
       return (
         <div className="main-buttons-container group">
           {userLists}
