@@ -1,18 +1,23 @@
 var React = require('react');
+var ListStore = require('../stores/listStore')
 var ListingActions = require('../actions/listingActions');
-var SessionStore = require('../stores/sessionStore');
 var ErrorHandler = require('./errorHandler');
 
 var AddItem = React.createClass({
   getInitialState: function() {
     return {
-      currentList: this.props.list,
+      currentList: ListStore.returnCurrentList(),
       name: "",
       description: "",
       howBadWannaGo: "",
-      city: ""
+      city: "San Francisco"
     };
   },
+
+  contextTypes: {
+    router: React.PropTypes.object.isRequired
+  },
+
   handleInputChanges: function(e){
     e.preventDefault();
     this.setState({[e.target.name]: e.target.value});
@@ -33,7 +38,7 @@ var AddItem = React.createClass({
   }
 
   if (errors.length > 0) {
-    ErrorHandler.sendError(errors)
+    ErrorActions.sendError(errors)
   } else {
 
     var listingParams =
@@ -48,6 +53,7 @@ var AddItem = React.createClass({
       };
 
     ListingActions.addListing(listingParams);
+    this.context.router.push("list")
   }
 
   },
@@ -82,7 +88,7 @@ var AddItem = React.createClass({
                     onChange={this.handleInputChanges}/>
           </div>
           <div>
-            <label htmlFor="howBadWannaGo">How Bad Do You Wanna Go? (1-5)</label><br />
+            <label htmlFor="howBadWannaGo">How Bad Do You Wanna Go? (Coolness Rating, 1-10)</label><br />
             <input type="integer"
                     className="login-text-input"
                     name="howBadWannaGo"

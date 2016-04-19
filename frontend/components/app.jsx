@@ -2,9 +2,10 @@ var React = require('react');
 var SessionStore = require('../stores/sessionStore');
 var AuthActions = require('../actions/authActions');
 var Login = require('./login');
-var Map = require('./map');
 var ListStore = require('../stores/listStore');
 var ListActions = require('../actions/listActions');
+
+window.ListStore = ListStore;
 
 var App = React.createClass({
   getInitialState: function(){
@@ -28,18 +29,16 @@ var App = React.createClass({
     this.listListener.remove();
   },
   _handleLogin: function(){
+    var currentUser = SessionStore.returnCurrentUser();
     this.setState({
       loggedIn: SessionStore.isLoggedIn(),
-      currentUser: SessionStore.returnCurrentUser()
+      currentUser: currentUser
     });
-    if (this.state.loggedIn) {
-      ListActions.getUserLists(this.state.currentUser.id);
-    }
+    ListActions.getUserLists(currentUser.userId);
   },
   _handleUserLists: function(){
-    var lists = ListStore.all();
     this.setState({
-      userLists: lists,
+      userLists: ListStore.all(),
       currentList: ListStore.returnCurrentList()
     });
   },
@@ -54,13 +53,6 @@ var App = React.createClass({
   _handleAddClick: function(e){
     e.preventDefault();
     this.context.router.push("add");
-  },
-  returnUsersLists: function() {
-    if (this.state.loggedIn) {
-      var lists = ListStore.all();
-      return lists;
-    }
-    return [];
   },
   _upperCaseIt: function(string) {
     return string[0].toUpperCase() + string.slice(1);
@@ -86,15 +78,13 @@ var App = React.createClass({
   },
   loginOrButtons: function() {
     if (this.state.loggedIn === true) {
-      var allUsersLists = this.returnUsersLists();
-      if (allUsersLists[1] !== undefined) {
+      if (this.state.userLists.length === 0) {
         lists = <option value="add">Add New List</option>;
       } else {
-        var lists = allUsersLists.map(function(list){
+        var lists = this.state.userLists.map(function(list){
           return <option key={list.id} value={list.id}>{this._upperCaseIt(list.name)}</option>;
         }.bind(this));
         lists.unshift(<option key="add" value="add">Add New List</option>);
-        debugger;
       }
       var userLists = (
         <select className="list-selector"

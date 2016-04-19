@@ -7,3 +7,58 @@
   max-width: 200px;
   display: block;
 }
+
+.listing-title {
+  text-align: center;
+  color: rgb(238,1,123);
+  margin-bottom: 20px;
+}
+
+.listing-li {
+  border-bottom: solid 1px aliceblue;
+  padding-bottom: 15px;
+}
+
+.listing-descrip {
+  max-width: 180px;
+  text-align: right;
+}
+
+.list-line {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  width: 80%;
+  margin: 0 auto;
+}
+
+.yelp-logo {
+  background-image: url('https://s3-media2.fl.yelpcdn.com/assets/srv0/developer_pages/5cb298e8a186/assets/img/yelp-logo-xsmall@2x.png');
+  background-size: cover;
+  width: 40px;
+  height: 20px;
+  background-repeat: no-repeat;
+}
+
+.yelp-reviews {
+  background-image: url('https://s3-media2.fl.yelpcdn.com/assets/srv0/developer_pages/a1acf7a7a2b8/assets/img/yelp_review_btn_dark@2x.png');
+  background-size: cover;
+  width: 100px;
+  height: 20px;
+  background-repeat: no-repeat;
+}
+
+.yelp-line {
+width: 100px;
+}
+
+.rating {
+  display: flex;
+}
+
+.between-list-lines {
+  width: 65%;
+  border-color: rgba(250,250,250,.2);
+  margin-top: 20px;
+  margin-bottom: 20px;
+}

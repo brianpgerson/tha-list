@@ -8,8 +8,6 @@ var _sessionState = {
   createdAt: null
 };
 
-var _userInfo = {};
-
 var SessionStore = new Store(AppDispatcher);
 
 function setSessionState(sessionParams){
@@ -19,37 +17,25 @@ function setSessionState(sessionParams){
   _sessionState['createdAt'] = sessionParams['created_at'];
 }
 
-function setUserInfo(userParams){
-  _userInfo = userParams;
-}
-
 SessionStore.__onDispatch = function(payload) {
   switch(payload.actionType) {
   case "CHECK_LOGIN":
-    setSessionState(payload.sessionParams);
+    setSessionState(payload.sessionParams.user);
     this.__emitChange();
     break;
   case "LOGGED_IN":
-    setSessionState(payload.sessionParams);
+    setSessionState(payload.sessionParams.user);
     this.__emitChange();
     break;
   case "LOGGED_OUT":
-    setSessionState(payload.sessionParams);
-    this.__emitChange();
-    break;
-  case "RECEIVE_USER_INFO":
-    setUserInfo(payload.userParams);
+    setSessionState(payload.sessionParams.user);
     this.__emitChange();
     break;
   }
 };
 
 SessionStore.returnCurrentUser = function() {
-  return {
-    username: _sessionState.username,
-    userId: _sessionState.userId,
-    createdAt: _sessionState.createdAt
-  };
+  return _sessionState;
 };
 
 SessionStore.getUserId = function() {

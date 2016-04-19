@@ -23,8 +23,8 @@ function setCurrent(list) {
 ListStore.__onDispatch = function(payload) {
   switch(payload.actionType) {
     case "RECEIVE_AND_SET":
-      resetList(payload.list);
-      setCurrent(payload.list);
+      resetList(payload.list.list);
+      setCurrent(payload.list.list);
       this.__emitChange();
       break;
     case "LISTS_RECEIVED":
@@ -32,7 +32,7 @@ ListStore.__onDispatch = function(payload) {
       this.__emitChange();
       break;
     case "CURRENT_LIST":
-      setCurrent(payload.list);
+      setCurrent(payload.list.list);
       this.__emitChange();
       break;
   }
@@ -48,7 +48,7 @@ ListStore.all = function () {
 
 ListStore.returnCurrentList = function() {
   if (_currentList) {
-    return _currentList.list;
+    return _currentList;
   } else {
     return null;
   }

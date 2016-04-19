@@ -12,7 +12,6 @@ class Api::ListingsController < ApplicationController
   end
 
   def get_yelp_info(input)
-    debugger
     parameters = {term: input['name'], limit: 1}
     res = Yelp.client.search(input['city'], parameters).businesses.first;
     listing = {
@@ -21,6 +20,7 @@ class Api::ListingsController < ApplicationController
       description: input['description'],
       lat: res.location.coordinate.latitude,
       lng: res.location.coordinate.longitude,
+      num_ratings: res.review_count,
       rating: res.rating,
       rating_img_url: res.rating_img_url,
       how_bad_wanna_go: input['how_bad_wanna_go'],

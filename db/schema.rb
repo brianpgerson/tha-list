@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160331001917) do
+ActiveRecord::Schema.define(version: 20160419231451) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,7 +19,6 @@ ActiveRecord::Schema.define(version: 20160331001917) do
   create_table "listings", force: :cascade do |t|
     t.string   "name",                                       null: false
     t.string   "description",                                null: false
-    t.integer  "yelp_biz_id"
     t.datetime "created_at",                                 null: false
     t.datetime "updated_at",                                 null: false
     t.float    "lat",              default: 0.0,             null: false
@@ -29,9 +28,9 @@ ActiveRecord::Schema.define(version: 20160331001917) do
     t.string   "city",             default: "San Francisco", null: false
     t.float    "rating",           default: 0.0,             null: false
     t.string   "rating_img_url"
+    t.integer  "num_ratings"
+    t.string   "yelp_biz_id"
   end
-
-  add_index "listings", ["yelp_biz_id"], name: "index_listings_on_yelp_biz_id", using: :btree
 
   create_table "lists", force: :cascade do |t|
     t.string   "name",                        null: false

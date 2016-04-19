@@ -1,3 +1,5 @@
+require 'byebug'
+
 class Api::SessionsController < ApplicationController
 
   def create
@@ -15,11 +17,12 @@ class Api::SessionsController < ApplicationController
       @user = current_user
       render :show
     else
-      render json: {
+      @user = {
         session_token: nil,
         username: nil,
         id: nil
       }
+      render json: {user: @user} 
     end
   end
 

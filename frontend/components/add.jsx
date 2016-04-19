@@ -6,25 +6,12 @@ var AddList = require('./addList');
 var Add = React.createClass({
   getInitialState: function() {
     return {
-      whatToAdd: null,
-      currentList: ListStore.returnCurrentList(),
+      whatToAdd: null
     };
   },
 
   contextTypes: {
     router: React.PropTypes.object.isRequired
-  },
-
-  componentWillMount: function() {
-    this.listStoreListener = ListStore.addListener(this._handleCurrentList);
-  },
-  componentWillUnmount: function() {
-    this.listStoreListener.remove();
-  },
-  _handleCurrentList: function() {
-    this.setState({
-      currentList: ListStore.returnCurrentList()
-    });
   },
   _handleList: function() {
     this.context.router.push("add/newlist");

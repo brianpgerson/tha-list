@@ -51,9 +51,9 @@
 	var IndexRoute = __webpack_require__(159).IndexRoute;
 	var hashHistory = __webpack_require__(159).hashHistory;
 	var App = __webpack_require__(216);
-	var List = __webpack_require__(248);
+	var List = __webpack_require__(244);
 	var Login = __webpack_require__(240);
-	var Map = __webpack_require__(241);
+	var Map = __webpack_require__(249);
 	var Add = __webpack_require__(250);
 	var AddList = __webpack_require__(254);
 	var AddItem = __webpack_require__(251);
@@ -24752,9 +24752,10 @@
 	var SessionStore = __webpack_require__(217);
 	var AuthActions = __webpack_require__(237);
 	var Login = __webpack_require__(240);
-	var Map = __webpack_require__(241);
-	var ListStore = __webpack_require__(245);
-	var ListActions = __webpack_require__(246);
+	var ListStore = __webpack_require__(241);
+	var ListActions = __webpack_require__(242);
+	
+	window.ListStore = ListStore;
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -24780,18 +24781,16 @@
 	    this.listListener.remove();
 	  },
 	  _handleLogin: function () {
+	    var currentUser = SessionStore.returnCurrentUser();
 	    this.setState({
 	      loggedIn: SessionStore.isLoggedIn(),
-	      currentUser: SessionStore.returnCurrentUser()
+	      currentUser: currentUser
 	    });
-	    if (this.state.loggedIn) {
-	      ListActions.getUserLists(this.state.currentUser.id);
-	    }
+	    ListActions.getUserLists(currentUser.userId);
 	  },
 	  _handleUserLists: function () {
-	    var lists = ListStore.all();
 	    this.setState({
-	      userLists: lists,
+	      userLists: ListStore.all(),
 	      currentList: ListStore.returnCurrentList()
 	    });
 	  },
@@ -24806,13 +24805,6 @@
 	  _handleAddClick: function (e) {
 	    e.preventDefault();
 	    this.context.router.push("add");
-	  },
-	  returnUsersLists: function () {
-	    if (this.state.loggedIn) {
-	      var lists = ListStore.all();
-	      return lists;
-	    }
-	    return [];
 	  },
 	  _upperCaseIt: function (string) {
 	    return string[0].toUpperCase() + string.slice(1);
@@ -24850,15 +24842,14 @@
 	  },
 	  loginOrButtons: function () {
 	    if (this.state.loggedIn === true) {
-	      var allUsersLists = this.returnUsersLists();
-	      if (allUsersLists[1] !== undefined) {
+	      if (this.state.userLists.length === 0) {
 	        lists = React.createElement(
 	          'option',
 	          { value: 'add' },
 	          'Add New List'
 	        );
 	      } else {
-	        var lists = allUsersLists.map(function (list) {
+	        var lists = this.state.userLists.map(function (list) {
 	          return React.createElement(
 	            'option',
 	            { key: list.id, value: list.id },
@@ -24870,7 +24861,6 @@
 	          { key: 'add', value: 'add' },
 	          'Add New List'
 	        ));
-	        debugger;
 	      }
 	      var userLists = React.createElement(
 	        'select',
@@ -24933,8 +24923,6 @@
 	  createdAt: null
 	};
 	
-	var _userInfo = {};
-	
 	var SessionStore = new Store(AppDispatcher);
 	
 	function setSessionState(sessionParams) {
@@ -24944,37 +24932,25 @@
 	  _sessionState['createdAt'] = sessionParams['created_at'];
 	}
 	
-	function setUserInfo(userParams) {
-	  _userInfo = userParams;
-	}
-	
 	SessionStore.__onDispatch = function (payload) {
 	  switch (payload.actionType) {
 	    case "CHECK_LOGIN":
-	      setSessionState(payload.sessionParams);
+	      setSessionState(payload.sessionParams.user);
 	      this.__emitChange();
 	      break;
 	    case "LOGGED_IN":
-	      setSessionState(payload.sessionParams);
+	      setSessionState(payload.sessionParams.user);
 	      this.__emitChange();
 	      break;
 	    case "LOGGED_OUT":
-	      setSessionState(payload.sessionParams);
-	      this.__emitChange();
-	      break;
-	    case "RECEIVE_USER_INFO":
-	      setUserInfo(payload.userParams);
+	      setSessionState(payload.sessionParams.user);
 	      this.__emitChange();
 	      break;
 	  }
 	};
 	
 	SessionStore.returnCurrentUser = function () {
-	  return {
-	    username: _sessionState.username,
-	    userId: _sessionState.userId,
-	    createdAt: _sessionState.createdAt
-	  };
+	  return _sessionState;
 	};
 	
 	SessionStore.getUserId = function () {
@@ -31912,10 +31888,455 @@
 /* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var AppDispatcher = __webpack_require__(218);
+	var Store = __webpack_require__(222).Store;
+	
+	var ListStore = new Store(AppDispatcher);
+	var _lists = {};
+	var _currentList = null;
+	
+	function resetList(list) {
+	  _lists[list.id] = list;
+	}
+	
+	function resetLists(lists) {
+	  _lists = {};
+	  lists.forEach(function (listing, i) {
+	    resetList(listing);
+	  });
+	}
+	
+	function setCurrent(list) {
+	  _currentList = list;
+	}
+	
+	ListStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	    case "RECEIVE_AND_SET":
+	      resetList(payload.list.list);
+	      setCurrent(payload.list.list);
+	      this.__emitChange();
+	      break;
+	    case "LISTS_RECEIVED":
+	      resetLists(payload.lists);
+	      this.__emitChange();
+	      break;
+	    case "CURRENT_LIST":
+	      setCurrent(payload.list.list);
+	      this.__emitChange();
+	      break;
+	  }
+	};
+	
+	ListStore.all = function () {
+	  var lists = [];
+	  Object.keys(_lists).forEach(function (key) {
+	    lists.push(_lists[key]);
+	  });
+	  return lists;
+	};
+	
+	ListStore.returnCurrentList = function () {
+	  if (_currentList) {
+	    return _currentList;
+	  } else {
+	    return null;
+	  }
+	};
+	
+	module.exports = ListStore;
+
+/***/ },
+/* 242 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(218);
+	var ListServerApi = __webpack_require__(243);
+	
+	var ListActions = {
+	
+	  // ======INBOUND
+	  receiveAndSetCurrent: function (list) {
+	    AppDispatcher.dispatch({
+	      actionType: "RECEIVE_AND_SET",
+	      list: list
+	    });
+	  },
+	
+	  receiveLists: function (lists) {
+	    AppDispatcher.dispatch({
+	      actionType: "LISTS_RECEIVED",
+	      lists: lists
+	    });
+	  },
+	
+	  receiveCurrentList: function (list) {
+	    AppDispatcher.dispatch({
+	      actionType: "CURRENT_LIST",
+	      list: list
+	    });
+	  },
+	
+	  // ======OUTBOUND
+	  getUserLists: function (userId) {
+	    ListServerApi.fetchLists(userId, ListActions.receiveLists);
+	  },
+	
+	  setCurrentList: function (listId) {
+	    ListServerApi.setCurrentList(listId, ListActions.receiveCurrentList);
+	  },
+	
+	  addList: function (listParams) {
+	    ListServerApi.addList(listParams, ListActions.receiveAndSetCurrent);
+	  }
+	
+	};
+	
+	module.exports = ListActions;
+
+/***/ },
+/* 243 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var ErrorActions = __webpack_require__(239);
+	
+	var ListServerApi = {
+	  addList: function (listParams, callback) {
+	    $.ajax({
+	      url: "api/lists",
+	      type: "POST",
+	      data: listParams,
+	      success: function (data) {
+	        callback(data);
+	      },
+	      error: function (response) {
+	        var error = JSON.parse(response.responseText).errors;
+	        ErrorActions.sendError(error);
+	      }
+	    });
+	  },
+	
+	  fetchLists: function (userId, callback) {
+	    $.ajax({
+	      url: "api/lists",
+	      type: "GET",
+	      data: userId,
+	      success: function (data) {
+	        callback(data);
+	      },
+	      error: function (response) {
+	        var error = JSON.parse(response.responseText).errors;
+	        ErrorActions.sendError(error);
+	      }
+	    });
+	  },
+	
+	  setCurrentList: function (listId, callback) {
+	    $.ajax({
+	      url: "api/lists/" + listId,
+	      type: "GET",
+	      success: function (data) {
+	        callback(data);
+	      },
+	      error: function (response) {
+	        var error = JSON.parse(response.responseText).errors;
+	        ErrorActions.sendError(error);
+	      }
+	    });
+	  }
+	};
+	
+	module.exports = ListServerApi;
+
+/***/ },
+/* 244 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var React = __webpack_require__(1);
-	var ListingStore = __webpack_require__(242);
-	var ListingActions = __webpack_require__(243);
-	var ListStore = __webpack_require__(245);
+	var SessionStore = __webpack_require__(217);
+	var ListingStore = __webpack_require__(245);
+	var AuthActions = __webpack_require__(237);
+	var ListingActions = __webpack_require__(246);
+	var ListItem = __webpack_require__(248);
+	var ListStore = __webpack_require__(241);
+	var ListingStore = __webpack_require__(245);
+	
+	var List = React.createClass({
+	  displayName: 'List',
+	
+	  getInitialState: function () {
+	    return {
+	      currentUser: SessionStore.returnCurrentUser(),
+	      currentList: ListStore.returnCurrentList(),
+	      listings: []
+	    };
+	  },
+	  componentWillMount: function () {
+	    this.listListener = ListStore.addListener(this._handleCurrentList);
+	    this.listingListener = ListingStore.addListener(this._handleListings);
+	    if (this.state.currentList) {
+	      ListingActions.fetchListingsNoBoundaries(this.state.currentList.id);
+	    }
+	  },
+	  componentWillUnmount: function () {
+	    this.listListener.remove();
+	    this.listingListener.remove();
+	  },
+	  _handleCurrentList: function () {
+	    this.setState({
+	      currentList: ListStore.returnCurrentList()
+	    });
+	    if (this.state.currentList) {
+	      ListingActions.fetchListingsNoBoundaries(this.state.currentList.id);
+	    }
+	  },
+	  _handleListings: function () {
+	    this.setState({
+	      listings: ListingStore.all()
+	    });
+	  },
+	  returnListings: function () {
+	    var listings = this.state.listings.map(function (listing) {
+	      return React.createElement(ListItem, { key: listing.id, listing: listing });
+	    });
+	    return listings;
+	  },
+	  render: function () {
+	    var listings = this.returnListings();
+	    return React.createElement(
+	      'ul',
+	      { className: 'list-ul' },
+	      listings
+	    );
+	  }
+	});
+	
+	module.exports = List;
+
+/***/ },
+/* 245 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(218);
+	var Store = __webpack_require__(222).Store;
+	
+	var ListingStore = new Store(AppDispatcher);
+	var _listings = [];
+	
+	function resetListings(listings) {
+	  _listings = listings;
+	}
+	
+	ListingStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	    case "LISTINGS_RECEIVED":
+	      resetListings(payload.listings);
+	      this.__emitChange();
+	      break;
+	  }
+	};
+	
+	ListingStore.all = function () {
+	  return _listings;
+	};
+	
+	module.exports = ListingStore;
+
+/***/ },
+/* 246 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(218);
+	var ListingServerApi = __webpack_require__(247);
+	
+	var ListingActions = {
+	
+	  // ======INBOUND
+	  receiveListings: function (listings) {
+	    AppDispatcher.dispatch({
+	      actionType: "LISTINGS_RECEIVED",
+	      listings: listings
+	    });
+	  },
+	
+	  // ======OUTBOUND
+	  addListing: function (listingParams) {
+	    ListingServerApi.addListing(listingParams, ListingActions.receiveListings);
+	  },
+	
+	  fetchListings: function (listId, boundaries) {
+	    ListingServerApi.fetchListings(listId, boundaries, ListingActions.receiveListings);
+	  },
+	
+	  fetchListingsNoBoundaries: function (listId) {
+	    ListingServerApi.fetchListingsNoBoundaries(listId, ListingActions.receiveListings);
+	  }
+	
+	};
+	
+	module.exports = ListingActions;
+
+/***/ },
+/* 247 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var ErrorActions = __webpack_require__(239);
+	
+	var ListingServerApi = {
+	  addListing: function (listingParams, callback) {
+	    $.ajax({
+	      url: "api/listings",
+	      type: "POST",
+	      data: listingParams,
+	      success: function (data) {
+	        callback(data);
+	      },
+	      error: function (response) {
+	        var error = JSON.parse(response.responseText).errors;
+	        ErrorActions.sendError(error);
+	      }
+	    });
+	  },
+	
+	  fetchListings: function (listId, boundaries, callback) {
+	    $.ajax({
+	      url: "api/lists/" + listId + "/listings",
+	      type: "GET",
+	      data: boundaries,
+	      success: function (data) {
+	        callback(data);
+	      },
+	      error: function (response) {
+	        var error = JSON.parse(response.responseText).errors;
+	        ErrorActions.sendError(error);
+	      }
+	    });
+	  },
+	
+	  fetchListingsNoBoundaries: function (listId, callback) {
+	    $.ajax({
+	      url: "api/lists/" + listId + "/listings",
+	      type: "GET",
+	      data: { bounds: null },
+	      success: function (data) {
+	        callback(data);
+	      },
+	      error: function (response) {
+	        var error = JSON.parse(response.responseText).errors;
+	        ErrorActions.sendError(error);
+	      }
+	    });
+	  }
+	};
+	
+	module.exports = ListingServerApi;
+
+/***/ },
+/* 248 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	
+	var ListItem = React.createClass({
+	  displayName: "ListItem",
+	
+	  returnListItem: function () {
+	    var listing = this.props.listing;
+	    var yelpURL = "http://www.yelp.com/biz/" + listing.yelp_biz_id;
+	    var ratingStyle = {
+	      backgroundImage: "url(" + listing.rating_img_url + ")",
+	      backgroundSize: "contain",
+	      height: "20px",
+	      width: "100px",
+	      backgroundRepeat: "no-repeat"
+	    };
+	    var formattedListing = React.createElement(
+	      "div",
+	      null,
+	      React.createElement(
+	        "h3",
+	        { className: "listing-title" },
+	        listing.name
+	      ),
+	      React.createElement(
+	        "div",
+	        { className: "list-line" },
+	        React.createElement(
+	          "span",
+	          null,
+	          "Coolness Rating: "
+	        ),
+	        listing.how_bad_wanna_go
+	      ),
+	      React.createElement("hr", { className: "between-list-lines" }),
+	      React.createElement(
+	        "div",
+	        { className: "list-line" },
+	        React.createElement(
+	          "div",
+	          null,
+	          "Yelp Info: "
+	        ),
+	        React.createElement(
+	          "div",
+	          { className: "yelp-line" },
+	          React.createElement(
+	            "div",
+	            { className: "rating" },
+	            React.createElement("div", { style: ratingStyle }),
+	            React.createElement(
+	              "div",
+	              { className: "rating-num" },
+	              "(",
+	              listing.num_ratings,
+	              ")"
+	            )
+	          ),
+	          React.createElement(
+	            "a",
+	            { href: yelpURL, target: "_blank" },
+	            React.createElement("div", { className: "yelp-reviews" })
+	          )
+	        )
+	      ),
+	      React.createElement("hr", { className: "between-list-lines" }),
+	      React.createElement(
+	        "div",
+	        { className: "list-line" },
+	        React.createElement(
+	          "span",
+	          null,
+	          "Description: "
+	        ),
+	        React.createElement(
+	          "span",
+	          { className: "listing-descrip" },
+	          listing.description
+	        )
+	      )
+	    );
+	    return formattedListing;
+	  },
+	  render: function () {
+	    var formattedListing = this.returnListItem();
+	    return React.createElement(
+	      "li",
+	      { className: "listing-li" },
+	      formattedListing
+	    );
+	  }
+	});
+	
+	module.exports = ListItem;
+
+/***/ },
+/* 249 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ListingStore = __webpack_require__(245);
+	var ListingActions = __webpack_require__(246);
+	var ListStore = __webpack_require__(241);
 	
 	var Map = React.createClass({
 	  displayName: 'Map',
@@ -32031,397 +32452,11 @@
 	module.exports = Map;
 
 /***/ },
-/* 242 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppDispatcher = __webpack_require__(218);
-	var Store = __webpack_require__(222).Store;
-	
-	var ListingStore = new Store(AppDispatcher);
-	var _listings = [];
-	
-	function resetListings(listings) {
-	  _listings = listings;
-	}
-	
-	ListingStore.__onDispatch = function (payload) {
-	  switch (payload.actionType) {
-	    case "LISTINGS_RECEIVED":
-	      resetListings(payload.listings);
-	      this.__emitChange();
-	      break;
-	  }
-	};
-	
-	ListingStore.all = function () {
-	  return _listings;
-	};
-	
-	module.exports = ListingStore;
-
-/***/ },
-/* 243 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppDispatcher = __webpack_require__(218);
-	var ListingServerApi = __webpack_require__(244);
-	
-	var ListingActions = {
-	
-	  // ======INBOUND
-	  receiveListings: function (listings) {
-	    AppDispatcher.dispatch({
-	      actionType: "LISTINGS_RECEIVED",
-	      listings: listings
-	    });
-	  },
-	
-	  // ======OUTBOUND
-	  addListing: function (listingParams) {
-	    ListingServerApi.addListing(listingParams, ListingActions.receiveListings);
-	  },
-	
-	  fetchListings: function (listId, boundaries) {
-	    ListingServerApi.fetchListings(listId, boundaries, ListingActions.receiveListings);
-	  },
-	
-	  fetchListingsNoBoundaries: function (listId) {
-	    ListingServerApi.fetchListingsNoBoundaries(listId, ListingActions.receiveListings);
-	  }
-	
-	};
-	
-	module.exports = ListingActions;
-
-/***/ },
-/* 244 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var ErrorActions = __webpack_require__(239);
-	
-	var ListingServerApi = {
-	  addListing: function (listingParams, callback) {
-	    $.ajax({
-	      url: "api/listings",
-	      type: "POST",
-	      data: listingParams,
-	      success: function (data) {
-	        callback(data);
-	      },
-	      error: function (response) {
-	        var error = JSON.parse(response.responseText).errors;
-	        ErrorActions.sendError(error);
-	      }
-	    });
-	  },
-	
-	  fetchListings: function (listId, boundaries, callback) {
-	    $.ajax({
-	      url: "api/lists/" + listId + "/listings",
-	      type: "GET",
-	      data: boundaries,
-	      success: function (data) {
-	        callback(data);
-	      },
-	      error: function (response) {
-	        var error = JSON.parse(response.responseText).errors;
-	        ErrorActions.sendError(error);
-	      }
-	    });
-	  },
-	
-	  fetchListingsNoBoundaries: function (listId, callback) {
-	    $.ajax({
-	      url: "api/lists/" + listId + "/listings",
-	      type: "GET",
-	      data: { bounds: null },
-	      success: function (data) {
-	        callback(data);
-	      },
-	      error: function (response) {
-	        var error = JSON.parse(response.responseText).errors;
-	        ErrorActions.sendError(error);
-	      }
-	    });
-	  }
-	};
-	
-	module.exports = ListingServerApi;
-
-/***/ },
-/* 245 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppDispatcher = __webpack_require__(218);
-	var Store = __webpack_require__(222).Store;
-	
-	var ListStore = new Store(AppDispatcher);
-	var _lists = {};
-	var _currentList = null;
-	
-	function resetList(list) {
-	  _lists[list.id] = list;
-	}
-	
-	function resetLists(lists) {
-	  _lists = {};
-	  lists.forEach(function (listing, i) {
-	    resetList(listing);
-	  });
-	}
-	
-	function setCurrent(list) {
-	  _currentList = list;
-	}
-	
-	ListStore.__onDispatch = function (payload) {
-	  switch (payload.actionType) {
-	    case "RECEIVE_AND_SET":
-	      resetList(payload.list);
-	      setCurrent(payload.list);
-	      this.__emitChange();
-	      break;
-	    case "LISTS_RECEIVED":
-	      resetLists(payload.lists);
-	      this.__emitChange();
-	      break;
-	    case "CURRENT_LIST":
-	      setCurrent(payload.list);
-	      this.__emitChange();
-	      break;
-	  }
-	};
-	
-	ListStore.all = function () {
-	  var lists = [];
-	  Object.keys(_lists).forEach(function (key) {
-	    lists.push(_lists[key]);
-	  });
-	  return lists;
-	};
-	
-	ListStore.returnCurrentList = function () {
-	  if (_currentList) {
-	    return _currentList.list;
-	  } else {
-	    return null;
-	  }
-	};
-	
-	module.exports = ListStore;
-
-/***/ },
-/* 246 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppDispatcher = __webpack_require__(218);
-	var ListServerApi = __webpack_require__(247);
-	
-	var ListActions = {
-	
-	  // ======INBOUND
-	  receiveAndSetCurrent: function (list) {
-	    AppDispatcher.dispatch({
-	      actionType: "RECEIVE_AND_SET",
-	      list: list
-	    });
-	  },
-	
-	  receiveLists: function (lists) {
-	    AppDispatcher.dispatch({
-	      actionType: "LISTS_RECEIVED",
-	      lists: lists
-	    });
-	  },
-	
-	  receiveCurrentList: function (list) {
-	    AppDispatcher.dispatch({
-	      actionType: "CURRENT_LIST",
-	      list: list
-	    });
-	  },
-	
-	  // ======OUTBOUND
-	  getUserLists: function (userId) {
-	    ListServerApi.fetchLists(userId, ListActions.receiveLists);
-	  },
-	
-	  setCurrentList: function (listId) {
-	    ListServerApi.setCurrentList(listId, ListActions.receiveCurrentList);
-	  },
-	
-	  addList: function (listParams) {
-	    ListServerApi.addList(listParams, ListActions.receiveAndSetCurrent);
-	  }
-	
-	};
-	
-	module.exports = ListActions;
-
-/***/ },
-/* 247 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var ErrorActions = __webpack_require__(239);
-	
-	var ListServerApi = {
-	  addList: function (listParams, callback) {
-	    $.ajax({
-	      url: "api/lists",
-	      type: "POST",
-	      data: listParams,
-	      success: function (data) {
-	        callback(data);
-	      },
-	      error: function (response) {
-	        var error = JSON.parse(response.responseText).errors;
-	        ErrorActions.sendError(error);
-	      }
-	    });
-	  },
-	
-	  fetchLists: function (userId, callback) {
-	    $.ajax({
-	      url: "api/lists",
-	      type: "GET",
-	      data: userId,
-	      success: function (data) {
-	        callback(data);
-	      },
-	      error: function (response) {
-	        var error = JSON.parse(response.responseText).errors;
-	        ErrorActions.sendError(error);
-	      }
-	    });
-	  },
-	
-	  setCurrentList: function (listId, callback) {
-	    $.ajax({
-	      url: "api/lists/" + listId,
-	      type: "GET",
-	      success: function (data) {
-	        callback(data);
-	      },
-	      error: function (response) {
-	        var error = JSON.parse(response.responseText).errors;
-	        ErrorActions.sendError(error);
-	      }
-	    });
-	  }
-	};
-	
-	module.exports = ListServerApi;
-
-/***/ },
-/* 248 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var SessionStore = __webpack_require__(217);
-	var ListingStore = __webpack_require__(242);
-	var AuthActions = __webpack_require__(237);
-	var ListingActions = __webpack_require__(243);
-	var ListItem = __webpack_require__(249);
-	var ListStore = __webpack_require__(245);
-	var ListingStore = __webpack_require__(242);
-	
-	var List = React.createClass({
-	  displayName: 'List',
-	
-	  getInitialState: function () {
-	    return {
-	      currentUser: SessionStore.returnCurrentUser(),
-	      currentList: ListStore.returnCurrentList(),
-	      listings: []
-	    };
-	  },
-	  componentWillMount: function () {
-	    this.listListener = ListStore.addListener(this._handleCurrentList);
-	    this.listingListener = ListingStore.addListener(this._handleListings);
-	    if (this.state.currentList) {
-	      ListingActions.fetchListingsNoBoundaries(this.state.currentList.id);
-	    }
-	  },
-	  componentWillUnmount: function () {
-	    this.listListener.remove();
-	    this.listingListener.remove();
-	  },
-	  _handleCurrentList: function () {
-	    this.setState({
-	      currentList: ListStore.returnCurrentList()
-	    });
-	    if (this.state.currentList) {
-	      ListingActions.fetchListingsNoBoundaries(this.state.currentList.id);
-	    }
-	  },
-	  _handleListings: function () {
-	    this.setState({
-	      listings: ListingStore.all()
-	    });
-	  },
-	  returnListings: function () {
-	    var listings = this.state.listings.map(function (listing) {
-	      return React.createElement(ListItem, { key: listing.id, listing: listing });
-	    });
-	    return listings;
-	  },
-	  render: function () {
-	    var listings = this.returnListings();
-	    return React.createElement(
-	      'ul',
-	      { className: 'list-ul' },
-	      listings
-	    );
-	  }
-	});
-	
-	module.exports = List;
-
-/***/ },
-/* 249 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	
-	var ListItem = React.createClass({
-	  displayName: "ListItem",
-	
-	  returnListItem: function () {
-	    var listing = this.props.listing;
-	    var formattedListing = React.createElement(
-	      "div",
-	      null,
-	      React.createElement(
-	        "h3",
-	        { className: "listing-title" },
-	        listing.name
-	      ),
-	      React.createElement(
-	        "p",
-	        { className: "listing-text" },
-	        listing.description
-	      )
-	    );
-	    return formattedListing;
-	  },
-	  render: function () {
-	    var formattedListing = this.returnListItem();
-	    return React.createElement(
-	      "li",
-	      null,
-	      formattedListing
-	    );
-	  }
-	});
-	
-	module.exports = ListItem;
-
-/***/ },
 /* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var ListStore = __webpack_require__(245);
+	var ListStore = __webpack_require__(241);
 	var AddItem = __webpack_require__(251);
 	var AddList = __webpack_require__(254);
 	
@@ -32430,25 +32465,12 @@
 	
 	  getInitialState: function () {
 	    return {
-	      whatToAdd: null,
-	      currentList: ListStore.returnCurrentList()
+	      whatToAdd: null
 	    };
 	  },
 	
 	  contextTypes: {
 	    router: React.PropTypes.object.isRequired
-	  },
-	
-	  componentWillMount: function () {
-	    this.listStoreListener = ListStore.addListener(this._handleCurrentList);
-	  },
-	  componentWillUnmount: function () {
-	    this.listStoreListener.remove();
-	  },
-	  _handleCurrentList: function () {
-	    this.setState({
-	      currentList: ListStore.returnCurrentList()
-	    });
 	  },
 	  _handleList: function () {
 	    this.context.router.push("add/newlist");
@@ -32496,8 +32518,8 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var ListingActions = __webpack_require__(243);
-	var SessionStore = __webpack_require__(217);
+	var ListStore = __webpack_require__(241);
+	var ListingActions = __webpack_require__(246);
 	var ErrorHandler = __webpack_require__(252);
 	
 	var AddItem = React.createClass({
@@ -32505,13 +32527,18 @@
 	
 	  getInitialState: function () {
 	    return {
-	      currentList: this.props.list,
+	      currentList: ListStore.returnCurrentList(),
 	      name: "",
 	      description: "",
 	      howBadWannaGo: "",
-	      city: ""
+	      city: "San Francisco"
 	    };
 	  },
+	
+	  contextTypes: {
+	    router: React.PropTypes.object.isRequired
+	  },
+	
 	  handleInputChanges: function (e) {
 	    e.preventDefault();
 	    this.setState({ [e.target.name]: e.target.value });
@@ -32532,7 +32559,7 @@
 	    }
 	
 	    if (errors.length > 0) {
-	      ErrorHandler.sendError(errors);
+	      ErrorActions.sendError(errors);
 	    } else {
 	
 	      var listingParams = {
@@ -32546,6 +32573,7 @@
 	      };
 	
 	      ListingActions.addListing(listingParams);
+	      this.context.router.push("list");
 	    }
 	  },
 	  render: function () {
@@ -32612,7 +32640,7 @@
 	          React.createElement(
 	            'label',
 	            { htmlFor: 'howBadWannaGo' },
-	            'How Bad Do You Wanna Go? (1-5)'
+	            'How Bad Do You Wanna Go? (Coolness Rating, 1-10)'
 	          ),
 	          React.createElement('br', null),
 	          React.createElement('input', { type: 'integer',
@@ -32723,7 +32751,7 @@
 	var React = __webpack_require__(1);
 	var SessionStore = __webpack_require__(217);
 	var ErrorHandler = __webpack_require__(252);
-	var ListActions = __webpack_require__(246);
+	var ListActions = __webpack_require__(242);
 	var AuthActions = __webpack_require__(237);
 	
 	var AddList = React.createClass({
