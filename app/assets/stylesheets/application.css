@@ -101,3 +101,27 @@
   cursor: pointer;
   color: rgb(238,1,123);
 }
+
+#about {
+  width: 800px;
+  background-color: rgba(0,0,0,.8);
+  padding: 10px;
+  margin: auto;
+}
+
+#about p {
+  margin-bottom: 10px;
+}
+
+#about h3 {
+  text-align: center;
+}
+
+#about a {
+  text-decoration: none;
+}
+
+.text-link {
+  cursor: pointer;
+  color: rgb(238,1,123);
+}

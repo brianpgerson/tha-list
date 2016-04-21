@@ -6,11 +6,11 @@ var IndexRoute = require('react-router').IndexRoute;
 var hashHistory = require('react-router').hashHistory;
 var App = require('./components/app');
 var List = require('./components/list');
-var Login = require('./components/login');
 var Map = require('./components/map');
 var Add = require('./components/add');
 var AddList = require('./components/addList');
 var AddItem = require('./components/addItem');
+var About = require('./components/about');
 
 var routes = (
   <Route path="/" component={App}>
@@ -20,6 +20,7 @@ var routes = (
       <Route path="newitem" component={AddItem} />
       <Route path="newlist" component={AddList} />
     </Route>
+    <Route path="about" component={About} />
   </Route>
 );
 

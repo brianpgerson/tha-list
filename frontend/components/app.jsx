@@ -115,7 +115,6 @@ var App = React.createClass({
     var loginOrButtons = this.loginOrButtons();
     return (
       <div className="wrapper">
-        <header></header>
         {loginOrButtons}
         {this.props.children}
       </div>

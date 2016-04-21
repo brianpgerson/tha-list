@@ -52,11 +52,11 @@
 	var hashHistory = __webpack_require__(159).hashHistory;
 	var App = __webpack_require__(216);
 	var List = __webpack_require__(244);
-	var Login = __webpack_require__(240);
 	var Map = __webpack_require__(249);
 	var Add = __webpack_require__(250);
 	var AddList = __webpack_require__(254);
 	var AddItem = __webpack_require__(251);
+	var About = __webpack_require__(255);
 	
 	var routes = React.createElement(
 	  Route,
@@ -68,7 +68,8 @@
 	    { path: 'add', component: Add },
 	    React.createElement(Route, { path: 'newitem', component: AddItem }),
 	    React.createElement(Route, { path: 'newlist', component: AddList })
-	  )
+	  ),
+	  React.createElement(Route, { path: 'about', component: About })
 	);
 	
 	document.addEventListener('DOMContentLoaded', function () {
@@ -24900,7 +24901,6 @@
 	    return React.createElement(
 	      'div',
 	      { className: 'wrapper' },
-	      React.createElement('header', null),
 	      loginOrButtons,
 	      this.props.children
 	    );
@@ -32833,6 +32833,69 @@
 	});
 	
 	module.exports = AddList;
+
+/***/ },
+/* 255 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	
+	var About = React.createClass({
+	  displayName: "About",
+	
+	  contextTypes: {
+	    router: React.PropTypes.object.isRequired
+	  },
+	
+	  _handleMainClick: function () {
+	    this.context.router.push("/");
+	  },
+	
+	  render: function () {
+	    return React.createElement(
+	      "div",
+	      { id: "about" },
+	      React.createElement(
+	        "h3",
+	        null,
+	        "About"
+	      ),
+	      React.createElement(
+	        "p",
+	        null,
+	        "Tha List is a project by me, ",
+	        React.createElement(
+	          "a",
+	          { href: "http://www.briangerson.me", target: "_blank", className: "text-link" },
+	          "Brian Gerson"
+	        ),
+	        "."
+	      ),
+	      React.createElement(
+	        "p",
+	        null,
+	        "My girlfriend Ryan and I are both explorers by nature. When we were first getting to know each other, we'd constantly find new places to go and things to do. It just seemed to happen naturally, and some of my favorite spots in San Francisco are places we discovered together."
+	      ),
+	      React.createElement(
+	        "p",
+	        null,
+	        "Whenever we heard about a new spot, the mantra was \"Add it to the list!\" - but there was no list, and ideas would sometimes fall by the wayside. So for Ryan's birthday, I wanted to build Tha List, and dedicate it to her and all the things I can't wait for us to do together."
+	      ),
+	      React.createElement(
+	        "p",
+	        null,
+	        "So, happy birthday, Ryan - hope you like your present. Oh, and pick something on the list (I have some guesses for what it'll be) - it's on me."
+	      ),
+	      React.createElement(
+	        "p",
+	        { className: "text-link", onClick: this._handleMainClick },
+	        "Back to Tha List!"
+	      )
+	    );
+	  }
+	});
+	
+	module.exports = About;
 
 /***/ }
 /******/ ]);
