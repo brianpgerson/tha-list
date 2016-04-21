@@ -1,5 +1,3 @@
-require 'byebug'
-
 class Api::SessionsController < ApplicationController
 
   def create
@@ -22,7 +20,7 @@ class Api::SessionsController < ApplicationController
         username: nil,
         id: nil
       }
-      render json: {user: @user} 
+      render json: {user: @user}
     end
   end
 

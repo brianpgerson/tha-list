@@ -1,5 +1,3 @@
-require "byebug"
-
 class Listing < ActiveRecord::Base
   validates_presence_of :name, :description, :list_id, :lat, :lng
   after_initialize :ensure_description
