@@ -13,12 +13,62 @@
  *= require_tree .
  *= require_self
  */
+ @media (max-width: 800px) {
 
-.map {
-  width: 500px;
-  height: 500px;
-  margin: 50px auto;
-}
+   #root {
+    height: 100%;
+    width: 100%;
+   }
+
+   .map {
+     width: 90% !important;
+     height: 340px !important;
+   }
+
+   .body {
+     margin: 0;
+   }
+
+   header {
+     width: 400px;
+     height: 100px;
+     background-size: contain;
+   }
+
+   .list-selector {
+     font-size: 3em;
+     width: 100%;
+   }
+
+   .button-row {
+     display: flex;
+     justify-content: center;
+   }
+
+   .main-button {
+     font-size: 3em;
+   }
+
+   .list-ul {
+     width: 70%;
+     font-size: 1em;
+     max-height: 50%;
+   }
+
+   .rating-img {
+     width: 100px;
+     height: 20px;
+   }
+
+   .list-line {
+     margin: 1.5em auto;
+   }
+
+   #about {
+     max-width: 350px;
+   }
+
+ }
 
 .group {
   clear: both;
@@ -137,6 +187,12 @@ a {
 
 }
 
+.map {
+  width: 500px;
+  height: 500px;
+  margin: 50px auto;
+}
+
 footer {
   width: 100%;
   display: flex;
@@ -145,23 +201,4 @@ footer {
   bottom: 0;
   background-color: rgba(0,0,0,.8);
   padding: 20px;
-}
-
-@media (max-width: 800px) {
-
-  header {
-    width: 400px;
-    height: 100px;
-    background-size: contain;
-  }
-
-  .map {
-    width: 400px;
-    height: 400px;
-  }
-
-  #about {
-    max-width: 350px;
-  }
-
 }

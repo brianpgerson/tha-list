@@ -69,7 +69,7 @@ var App = React.createClass({
   returnButtons: function(){
     if (this.state.currentList) {
       return (
-        <div>
+        <div className="button-row">
           <button className="main-button" onClick={this._handleMapClick}>Map</button>
           <button className="main-button" onClick={this._handleListClick}>List</button>
           <button className="main-button" onClick={this._handleAddClick}>Add</button>

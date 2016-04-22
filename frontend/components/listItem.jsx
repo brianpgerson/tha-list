@@ -14,8 +14,6 @@ var ListItem = React.createClass({
     var ratingStyle = {
       backgroundImage: "url(" + listing.rating_img_url + ")",
       backgroundSize: "contain",
-      height: "20px",
-      width: "100px",
       backgroundRepeat: "no-repeat"
     };
     var formattedListing = (
@@ -33,7 +31,7 @@ var ListItem = React.createClass({
         <div className="list-line">
           <div>Yelp Info: </div>
           <div className="yelp-line">
-            <div className="rating"><div style={ratingStyle}></div><div className="rating-num">({listing.num_ratings})</div></div>
+            <div className="rating"><div className="rating-img" style={ratingStyle}></div><div className="rating-num">({listing.num_ratings})</div></div>
             <a href={yelpURL} target="_blank"><div className="yelp-reviews"></div></a>
           </div>
         </div>
