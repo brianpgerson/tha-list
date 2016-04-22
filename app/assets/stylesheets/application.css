@@ -115,13 +115,43 @@
 
 #about h3 {
   text-align: center;
+  margin-bottom: 10px;
 }
 
-#about a {
+a {
   text-decoration: none;
 }
 
 .text-link {
   cursor: pointer;
   color: rgb(238,1,123);
+}
+
+footer {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  position: absolute;
+  bottom: 0;
+  background-color: rgba(0,0,0,.8);
+  padding: 20px;
+}
+
+@media (max-width: 800px) {
+
+  header {
+    width: 400px;
+    height: 100px;
+    background-size: contain;
+  }
+
+  .map {
+    width: 400px;
+    height: 400px;
+  }
+
+  #about {
+    max-width: 350px;
+  }
+
 }

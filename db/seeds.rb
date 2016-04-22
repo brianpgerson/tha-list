@@ -1,15 +1,13 @@
-tha_list = List.create(
-  {name: "test list", owner_id: 1}
-)
+User.create({id: 1, username: "ryan", password_digest: "$2a$10$xcB12.c6DpThk60gjOdoV.fLq4wtU504s5QSHFwpp6Cw6m78NiTvS", session_token: "Dp0fknlJ9G_tbUuiC8SOMw"})
 
-listings = Listing.create(
-  [
-    {name: "Brenda's", list_id: 1, description: "It's a dirty old bench for weirdos and trash kings.", lat: 37.783488 , lng: -122.409112 },
-    {name: "Seven Hills", list_id: 1, description: "It's a nice bench full of french fries and birds.", lat: 37.791281, lng: -122.438131 },
-    {name: "Beach Chalet", list_id: 1, description: "It's a beachside bench with an ocean view.", lat: 37.768888, lng: -122.511425 },
-    {name: "Dogtown", list_id: 1, description: "It's a very tall bench for adults only.", lat: 37.760407,  lng: -122.447401 },
-    {name: "Presidio Bowl", list_id: 1, description: "It's a very lonely bench with room to think and breathe.", lat: 37.797458, lng: -122.465706 },
-    {name: "Cliff House", list_id: 2, description: "It's a strange bench that's always shrouded in a deep mist.", lat: 37.787846, lng: -122.505790},
-    {name: "Giant's Stadium", list_id: 2, description: "It's a black and orange bench in the finest of locales.", lat: 37.778857, lng: -122.388730}
-  ]
-)
+List.create({id: 1, name: "Ryan's List", owner_id: 1, subscriber_ids: []})
+
+Listing.create({ id: 1, name: "Pagan Idol", description: "Tiki cocktails and manta rays", lat: 37.7906907, lng: -122.4034515, list_id: 1, how_bad_wanna_go: 8, city: "San Francisco", rating: 4.0, rating_img_url: "https://s3-media4.fl.yelpcdn.com/assets/2/www/img/c2f3dd9799a5/ico/stars/v1/stars_4.png", num_ratings: 71, yelp_biz_id: "pagan-idol-san-francisco"}),
+Listing.create({ id: 2, name: "Alcatraz Island Night Tour", description: "Let's get tourist-y!", lat: 37.80685108785, lng: -122.404432296753, list_id: 1, how_bad_wanna_go: 7, city: "San Francisco", rating: 4.5, rating_img_url: "https://s3-media2.fl.yelpcdn.com/assets/2/www/img/99493c12711e/ico/stars/v1/stars_4_half.png", num_ratings: 144, yelp_biz_id: "alcatraz-island-night-tour-san-francisco"}),
+Listing.create({ id: 3, name: "Lazy Bear", description: "Cocktails and food a-la Sasto", lat: 37.76041, lng: -122.419693, list_id: 1, how_bad_wanna_go: 9, city: "San Francisco", rating: 4.5, rating_img_url: "https://s3-media2.fl.yelpcdn.com/assets/2/www/img/99493c12711e/ico/stars/v1/stars_4_half.png", num_ratings: 262, yelp_biz_id: "lazy-bear-san-francisco-5"}),
+Listing.create({ id: 4, name: "R&G Lounge", description: "Is it a lounge, or a restaurant???", lat: 37.7941177403554, lng: -122.404610176842, list_id: 1, how_bad_wanna_go: 7, city: "San Francisco", rating: 3.5, rating_img_url: "https://s3-media1.fl.yelpcdn.com/assets/2/www/img/5ef3eb3cb162/ico/stars/v1/stars_3_half.png", num_ratings: 3508, yelp_biz_id: "r-and-g-lounge-san-francisco"}),
+Listing.create({ id: 5, name: "Bar San Pancho", description: "Quesoburger, please", lat: 37.7650099, lng: -122.42391, list_id: 1, how_bad_wanna_go: 8, city: "San Francisco", rating: 5.0, rating_img_url: "https://s3-media1.fl.yelpcdn.com/assets/2/www/img/f1def11e4e79/ico/stars/v1/stars_5.png", num_ratings: 3, yelp_biz_id: "bar-san-pancho-san-francisco"}),
+Listing.create({ id: 6, name: "Flour + Water", description: "Let's get seven pastas", lat: 37.7589188, lng: -122.4123077, list_id: 1, how_bad_wanna_go: 8, city: "San Francisco", rating: 3.5, rating_img_url: "https://s3-media1.fl.yelpcdn.com/assets/2/www/img/5ef3eb3cb162/ico/stars/v1/stars_3_half.png", num_ratings: 1849, yelp_biz_id: "flour-water-san-francisco"}),
+Listing.create({ id: 7, name: "Workshop", description: "Take a fun class like cocktail making or pickling", lat: 37.77757, lng: -122.44147, list_id: 1, how_bad_wanna_go: 8, city: "San Francisco", rating: 4.5, rating_img_url: "https://s3-media2.fl.yelpcdn.com/assets/2/www/img/99493c12711e/ico/stars/v1/stars_4_half.png", num_ratings: 97, yelp_biz_id: "workshop-san-francisco-2"}),
+Listing.create({ id: 8, name: "Sushi Bistro", description: "Casual but great sushi spot in the inner Rich", lat: 37.7770080566406, lng: -122.463500976562, list_id: 1, how_bad_wanna_go: 7, city: "San Francisco", rating: 4.0, rating_img_url: "https://s3-media4.fl.yelpcdn.com/assets/2/www/img/c2f3dd9799a5/ico/stars/v1/stars_4.png", num_ratings: 1388, yelp_biz_id: "sushi-bistro-san-francisco"}),
+Listing.create({ id: 9, name: "4505 Burgers & BBQ", description: "One last chance for SF BBQ", lat: 37.7761896, lng: -122.4382846, list_id: 1, how_bad_wanna_go: 8, city: "San Francisco", rating: 3.5, rating_img_url: "https://s3-media1.fl.yelpcdn.com/assets/2/www/img/5ef3eb3cb162/ico/stars/v1/stars_3_half.png", num_ratings: 815, yelp_biz_id: "4505-burgers-and-bbq-san-francisc})">

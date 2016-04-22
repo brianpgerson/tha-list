@@ -2,6 +2,7 @@ var React = require('react');
 var SessionStore = require('../stores/sessionStore');
 var AuthActions = require('../actions/authActions');
 var Login = require('./login');
+var Footer = require('./footer');
 var ListStore = require('../stores/listStore');
 var ListActions = require('../actions/listActions');
 
@@ -117,6 +118,7 @@ var App = React.createClass({
       <div className="wrapper">
         {loginOrButtons}
         {this.props.children}
+        <Footer />
       </div>
     );
   }

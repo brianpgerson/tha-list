@@ -24753,6 +24753,7 @@
 	var SessionStore = __webpack_require__(217);
 	var AuthActions = __webpack_require__(237);
 	var Login = __webpack_require__(240);
+	var Footer = __webpack_require__(256);
 	var ListStore = __webpack_require__(241);
 	var ListActions = __webpack_require__(242);
 	
@@ -24902,7 +24903,8 @@
 	      'div',
 	      { className: 'wrapper' },
 	      loginOrButtons,
-	      this.props.children
+	      this.props.children,
+	      React.createElement(Footer, null)
 	    );
 	  }
 	});
@@ -32896,6 +32898,48 @@
 	});
 	
 	module.exports = About;
+
+/***/ },
+/* 256 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	
+	var Footer = React.createClass({
+	  displayName: "Footer",
+	
+	  contextTypes: {
+	    router: React.PropTypes.object.isRequired
+	  },
+	
+	  _handleAboutClick: function () {
+	    this.context.router.push("about");
+	  },
+	
+	  render: function () {
+	    return React.createElement(
+	      "footer",
+	      null,
+	      React.createElement(
+	        "a",
+	        { className: "text-link", onClick: this._handleAboutClick },
+	        "About"
+	      ),
+	      React.createElement(
+	        "a",
+	        { className: "text-link", href: "http://www.briangerson.me", target: "_blank" },
+	        "Portfolio"
+	      ),
+	      React.createElement(
+	        "a",
+	        { className: "text-link", href: "http://www.github.com/brianpgerson/tha-list", target: "_blank" },
+	        "GitHub"
+	      )
+	    );
+	  }
+	});
+	
+	module.exports = Footer;
 
 /***/ }
 /******/ ]);
