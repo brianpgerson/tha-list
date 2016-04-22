@@ -8,12 +8,22 @@ function resetListings(listings) {
   _listings = listings;
 }
 
+function removeListing(listing) {
+ _listings = _listings.filter(function(li){
+   return li.id !== listing.id;
+ });
+}
+
 ListingStore.__onDispatch = function(payload) {
   switch(payload.actionType) {
     case "LISTINGS_RECEIVED":
-    resetListings(payload.listings);
-    this.__emitChange();
-    break;
+      resetListings(payload.listings);
+      this.__emitChange();
+      break;
+    case "LISTING_DELETED":
+      removeListing(payload.listing);
+      this.__emitChange();
+      break;
   }
 };
 

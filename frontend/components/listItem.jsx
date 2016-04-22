@@ -1,8 +1,15 @@
 var React = require('react');
+var ListingActions = require('../actions/listingActions');
 
 var ListItem = React.createClass({
+
+  removeListing: function(id){
+    ListingActions.deleteListing(id);
+  },
+
   returnListItem: function(){
     var listing = this.props.listing;
+    var that = this;
     var yelpURL = "http://www.yelp.com/biz/" + listing.yelp_biz_id;
     var ratingStyle = {
       backgroundImage: "url(" + listing.rating_img_url + ")",
@@ -14,6 +21,10 @@ var ListItem = React.createClass({
     var formattedListing = (
       <div>
         <h3 className="listing-title">{listing.name}</h3>
+        <div className="remove-listing" onClick={ function(){
+            that.removeListing(listing.id);
+          }
+        }>X</div>
 
         <div className="list-line"><span>Coolness Rating: </span>{listing.how_bad_wanna_go}</div>
 

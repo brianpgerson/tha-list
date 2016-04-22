@@ -1,3 +1,4 @@
+require 'byebug'
 class Api::ListingsController < ApplicationController
 
   def index
@@ -39,7 +40,7 @@ class Api::ListingsController < ApplicationController
   def destroy
     @listing = Listing.find(params[:id])
     Listing.delete(params[:id])
-    render :show
+    render json: @listing
   end
 
   def show

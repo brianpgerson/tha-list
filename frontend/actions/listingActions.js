@@ -11,7 +11,19 @@ var ListingActions = {
     });
   },
 
+  removeListing: function(listing) {
+    AppDispatcher.dispatch({
+      actionType: "LISTING_DELETED",
+      listing: listing
+    });
+  },
+
   // ======OUTBOUND
+
+  deleteListing: function(listingId) {
+    ListingServerApi.deleteListing(listingId, ListingActions.removeListing);
+  },
+
   addListing: function(listingParams) {
     ListingServerApi.addListing(listingParams, ListingActions.receiveListings);
   },

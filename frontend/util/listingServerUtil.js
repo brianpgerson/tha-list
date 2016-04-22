@@ -44,6 +44,20 @@ var ListingServerApi = {
         ErrorActions.sendError(error);
       }
     });
+  },
+
+  deleteListing: function(listingId, callback){
+    $.ajax({
+    url: "api/listings/" + listingId,
+    type: "DELETE",
+    success: function(data){
+        callback(data);
+      },
+    error: function(response){
+        var error = JSON.parse(response.responseText).errors;
+        ErrorActions.sendError(error);
+      }
+    });
   }
 };
 
