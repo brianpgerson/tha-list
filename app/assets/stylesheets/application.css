@@ -127,6 +127,16 @@ a {
   color: rgb(238,1,123);
 }
 
+.remove-listing {
+  color: rgb(238,1,123);
+  cursor: pointer;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  font-family: 'Permanent Marker', cursive;
+
+}
+
 footer {
   width: 100%;
   display: flex;
