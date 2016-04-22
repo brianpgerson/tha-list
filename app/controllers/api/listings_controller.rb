@@ -1,4 +1,3 @@
-require 'byebug'
 class Api::ListingsController < ApplicationController
 
   def index
