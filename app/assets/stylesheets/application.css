@@ -13,192 +13,186 @@
  *= require_tree .
  *= require_self
  */
- @media (max-width: 800px) {
+ @media all and (max-width: 800px) {
 
-   #root {
-    height: 100%;
-    width: 100%;
-   }
+  footer {
+    bottom: -100px;
+  }
 
-   .map {
+  header {
+    width: 300px;
+    height: 80px;
+    background-size: contain;
+  }
+
+  #about {
+    max-width: 300px;
+  }
+
+  .list-form, .listing-form {
+    width: 300px;
+  }
+
+  .login-text-input {
+    width: 280px
+  }
+
+  .map {
      width: 90% !important;
      height: 340px !important;
-   }
-
-   .body {
-     margin: 0;
-   }
-
-   header {
-     width: 400px;
-     height: 100px;
-     background-size: contain;
-   }
-
-   .list-selector {
-     font-size: 3em;
-     width: 100%;
-   }
-
-   .button-row {
-     display: flex;
-     justify-content: center;
-   }
-
-   .main-button {
-     font-size: 3em;
-   }
-
-   .list-ul {
-     width: 70%;
-     font-size: 1em;
-     max-height: 50%;
-   }
-
-   .rating-img {
-     width: 100px;
-     height: 20px;
-   }
-
-   .list-line {
-     margin: 1.5em auto;
-   }
-
-   #about {
-     max-width: 350px;
-   }
-
- }
-
-.group {
-  clear: both;
-  content: "";
-  display: table;
+  }
 }
 
-.main-buttons-container {
-  margin: 10px auto;
-  min-width: 246px;
-}
+@media all and (min-width: 800px){
 
-.main-button {
-  padding: 10px 20px;
-  font-size: 1.2em;
-  font-weight: bold;
-  margin: 2px;
-  background-color: ghostwhite;
-  color: black;
-  border: 2px solid black;
-}
+  html {
+    position: relative;
+  }
 
-.main-button:hover {
-  color: rgb(238,1,123);
-  cursor: pointer;
-  border-color: rgb(238,1,123);
-}
+  .list-form, .listing-form {
+    width: 400px;
+  }
 
-.secondary-color {
-  background-color: black;
-  border-color: white;
-  color: white;
-  font-family: 'Permanent Marker', cursive;
-}
+  .login-text-input {
+    width: 300px
+  }
 
-.list-selector {
-  width: 98%;
-  font-size: 1.2em;
-  margin: 0 auto;
-  display: block;
-  color: white;
-  background-color: black;
-}
-
-.login-text-input {
-  margin-top: 5px;
-  border-radius: 3px;
-  padding: 5px;
-  background-color: rgba(0,0,0,.8);
-  color: rgb(238,1,123);
-  margin-bottom: 20px;
-  width: 300px;
-}
-
-.login-form {
-  width: 300px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.listing-form, .list-form {
-  padding: 10px;
-  border-radius: 5px;
-  background-color: rgba(0,0,0,.8);
-  width: 400px;
-  margin: 50px auto;
-  text-align: center;
-}
-
-.login-form input[type=submit] {
-  margin: 5px;
-  border: 1px solid ghostwhite;
-  background-color: black;
-  color: ghostwhite;
-  padding: 5px;
-  transition: color .2s ease-in-out;
-}
-
-.login-form input[type=submit]:hover {
-  cursor: pointer;
-  color: rgb(238,1,123);
-}
-
-#about {
-  width: 800px;
-  background-color: rgba(0,0,0,.8);
-  padding: 10px;
-  margin: auto;
-}
-
-#about p {
-  margin-bottom: 10px;
-}
-
-#about h3 {
-  text-align: center;
-  margin-bottom: 10px;
-}
-
-a {
-  text-decoration: none;
-}
-
-.text-link {
-  cursor: pointer;
-  color: rgb(238,1,123);
-}
-
-.remove-listing {
-  color: rgb(238,1,123);
-  cursor: pointer;
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  font-family: 'Permanent Marker', cursive;
+  footer {
+    bottom: 0;
+  }
 
 }
+  .rating-img {
+    height: 20px;
+    width: 100px;
+  }
 
-.map {
-  width: 500px;
-  height: 500px;
-  margin: 50px auto;
-}
+  .group {
+    clear: both;
+    content: "";
+    display: table;
+  }
 
-footer {
-  width: 100%;
-  display: flex;
-  justify-content: space-around;
-  position: absolute;
-  bottom: 0;
-  background-color: rgba(0,0,0,.8);
-  padding: 20px;
+  .main-buttons-container {
+    margin: 10px auto;
+    min-width: 246px;
+  }
+
+  .main-button {
+    padding: 10px 20px;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 2px;
+    background-color: ghostwhite;
+    color: black;
+    border: 2px solid black;
+  }
+
+  .main-button:hover {
+    color: rgb(238,1,123);
+    cursor: pointer;
+    border-color: rgb(238,1,123);
+  }
+
+  .secondary-color {
+    background-color: black;
+    border-color: white;
+    color: white;
+    font-family: 'Permanent Marker', cursive;
+  }
+
+  .list-selector {
+    width: 98%;
+    font-size: 1.2em;
+    margin: 0 auto;
+    display: block;
+    color: white;
+    background-color: black;
+  }
+
+  .login-text-input {
+    margin-top: 5px;
+    border-radius: 3px;
+    padding: 5px;
+    background-color: rgba(0,0,0,.8);
+    color: rgb(238,1,123);
+    margin-bottom: 20px;
+  }
+
+  .login-form {
+    width: 300px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .listing-form, .list-form {
+    padding: 10px;
+    border-radius: 5px;
+    background-color: rgba(0,0,0,.8);
+    margin: 50px auto;
+    text-align: center;
+  }
+
+  .login-form input[type=submit] {
+    margin: 5px;
+    border: 1px solid ghostwhite;
+    background-color: black;
+    color: ghostwhite;
+    padding: 5px;
+    transition: color .2s ease-in-out;
+  }
+
+  .login-form input[type=submit]:hover {
+    cursor: pointer;
+    color: rgb(238,1,123);
+  }
+
+  #about {
+    width: 800px;
+    background-color: rgba(0,0,0,.8);
+    padding: 20px;
+    margin: auto;
+  }
+
+  #about p {
+    margin-bottom: 10px;
+  }
+
+  #about h3 {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  .text-link {
+    cursor: pointer;
+    color: rgb(238,1,123);
+  }
+
+  .remove-listing {
+    color: rgb(238,1,123);
+    cursor: pointer;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-family: 'Permanent Marker', cursive;
+
+  }
+
+  .map {
+    width: 500px;
+    height: 500px;
+    margin: 50px auto;
+  }
+
+  footer {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    position: absolute;
+    background-color: rgba(0,0,0,.8);
+    padding: 20px 0;
 }
