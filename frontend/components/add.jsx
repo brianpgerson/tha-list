@@ -2,6 +2,7 @@ var React = require('react');
 var ListStore = require('../stores/listStore');
 var AddItem = require('./addItem');
 var AddList = require('./addList');
+var AddFriend = require('./addFriend');
 
 var Add = React.createClass({
   getInitialState: function() {
@@ -19,15 +20,20 @@ var Add = React.createClass({
   _handleItem: function() {
     this.context.router.push("add/newitem");
   },
+  _handleFriend: function() {
+    this.context.router.push("add/newfriend");
+  },
   renderOptions: function() {
     var renderOps;
     if (this.state.whatToAdd === null)
     renderOps = (
       <div className="main-buttons-container group">
         <button onClick={this._handleList}
-                className="main-button secondary-color">New List</button>
+                className="main-button secondary-color">List</button>
         <button onClick={this._handleItem}
-                className="main-button secondary-color">New Item</button>
+                className="main-button secondary-color">Item</button>
+        <button onClick={this._handleFriend}
+                className="main-button secondary-color">Friend</button>
       </div>
     );
     else {
