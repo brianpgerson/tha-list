@@ -7,10 +7,8 @@ class User < ActiveRecord::Base
 
   after_initialize :ensure_session_token
 
-  has_many :lists,
-    foreign_key: :owner_id,
-    primary_key: :id,
-    class_name: "List"
+  has_many :user_lists
+  has_many :lists, through: :user_lists, source: :list
 
   def reset_session_token
     self.session_token == User.generate_session_token

@@ -24886,16 +24886,13 @@
 	      );
 	    } else if (this.state.loggedIn === false) {
 	      return React.createElement(Login, { isLoggedIn: false });
-	      // var childrenWithProps = React.Children.map(this.props.children, function(child) {
-	      //   return React.cloneElement(child, {doSomething : this.doSomething})
-	      // });
 	    } else {
-	        return React.createElement(
-	          'div',
-	          null,
-	          ' '
-	        );
-	      }
+	      return React.createElement(
+	        'div',
+	        null,
+	        ' '
+	      );
+	    }
 	  },
 	  render: function () {
 	    var loginOrButtons = this.loginOrButtons();
@@ -32148,9 +32145,13 @@
 	  render: function () {
 	    var listings = this.returnListings();
 	    return React.createElement(
-	      'ul',
-	      { className: 'list-ul' },
-	      listings
+	      'div',
+	      null,
+	      React.createElement(
+	        'ul',
+	        { className: 'list-ul' },
+	        listings
+	      )
 	    );
 	  }
 	});

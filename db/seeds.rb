@@ -1,6 +1,8 @@
 User.create({username: "ryan", password_digest: "$2a$10$xcB12.c6DpThk60gjOdoV.fLq4wtU504s5QSHFwpp6Cw6m78NiTvS", session_token: "Dp0fknlJ9G_tbUuiC8SOMw"})
 
-List.create({name: "Ryan's List", owner_id: 1, subscriber_ids: []})
+List.create({name: "Ryan's List"})
+
+UserList.create(list_id: 1, user_id: 1)
 
 Listing.create({name: "Pagan Idol", description: "Tiki cocktails and manta rays", lat: 37.7906907, lng: -122.4034515, list_id: 1, how_bad_wanna_go: 8, city: "San Francisco", rating: 4.0, rating_img_url: "https://s3-media4.fl.yelpcdn.com/assets/2/www/img/c2f3dd9799a5/ico/stars/v1/stars_4.png", num_ratings: 71, yelp_biz_id: "pagan-idol-san-francisco"})
 Listing.create({name: "Alcatraz Island Night Tour", description: "Let's get tourist-y!", lat: 37.80685108785, lng: -122.404432296753, list_id: 1, how_bad_wanna_go: 7, city: "San Francisco", rating: 4.5, rating_img_url: "https://s3-media2.fl.yelpcdn.com/assets/2/www/img/99493c12711e/ico/stars/v1/stars_4_half.png", num_ratings: 144, yelp_biz_id: "alcatraz-island-night-tour-san-francisco"})

@@ -49,9 +49,11 @@ var List = React.createClass({
   render: function(){
     var listings = this.returnListings();
     return (
-      <ul className="list-ul">
-        {listings}
-      </ul>
+      <div>
+        <ul className="list-ul">
+          {listings}
+        </ul>
+      </div>
     );
   }
 });

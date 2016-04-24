@@ -105,9 +105,6 @@ var App = React.createClass({
       );
     } else if (this.state.loggedIn === false) {
       return <Login isLoggedIn = {false}/>;
-      // var childrenWithProps = React.Children.map(this.props.children, function(child) {
-      //   return React.cloneElement(child, {doSomething : this.doSomething})
-      // });
     } else {
       return <div> </div>;
     }
