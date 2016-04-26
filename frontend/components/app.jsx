@@ -1,10 +1,12 @@
 var React = require('react');
 var SessionStore = require('../stores/sessionStore');
+var Flash = require('./flash');
 var AuthActions = require('../actions/authActions');
 var Login = require('./login');
 var Footer = require('./footer');
 var ListStore = require('../stores/listStore');
 var ListActions = require('../actions/listActions');
+var Modal = require('./modal');
 
 window.ListStore = ListStore;
 
@@ -99,7 +101,7 @@ var App = React.createClass({
         </select>
       );
       return (
-        <div className="main-buttons-container group">
+        <div className="main-buttons-container group padded gray-background">
           {userLists}
           <br />
           {this.returnButtons()}
@@ -115,7 +117,9 @@ var App = React.createClass({
     var loginOrButtons = this.loginOrButtons();
     return (
       <div className="wrapper">
+        <Flash />
         {loginOrButtons}
+        <Modal />
         {this.props.children}
         <Footer />
       </div>

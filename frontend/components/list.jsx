@@ -3,6 +3,7 @@ var SessionStore = require('../stores/sessionStore');
 var ListingStore = require('../stores/listingStore');
 var AuthActions = require('../actions/authActions');
 var ListingActions = require('../actions/listingActions');
+var ModalActions = require('../actions/modalActions');
 var ListItem = require('./listItem');
 var ListStore = require('../stores/listStore');
 var ListingStore = require('../stores/listingStore');
@@ -40,6 +41,11 @@ var List = React.createClass({
       listings: ListingStore.all()
     });
   },
+
+  maybeRemoveThisList: function(){
+    ModalActions.openModal("deleteList", this.state.currentList.id);
+  },
+
   returnListings: function(){
     var listings = this.state.listings.map(function(listing){
       return <ListItem key={listing.id} listing={listing}/>;
@@ -54,6 +60,8 @@ var List = React.createClass({
         <ul className="list-ul">
           {listings}
         </ul>
+        <div className="text-link center" onClick={this.maybeRemoveThisList}>Remove this list</div>
+
       </div>
     );
   }

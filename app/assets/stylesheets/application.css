@@ -101,6 +101,11 @@
     font-family: 'Permanent Marker', cursive;
   }
 
+  .main-button:focus {
+    color: rgb(238,1,123);
+    border-color: rgb(238,1,123);
+  }
+
   .list-selector {
     width: 98%;
     font-size: 1.2em;
@@ -138,6 +143,11 @@
     width: 300px;
     margin: 0 auto;
     text-align: center;
+  }
+
+  .button-row {
+    display: flex;
+    justify-content: center;
   }
 
   .listing-form, .list-form {
@@ -210,4 +220,37 @@
     position: absolute;
     background-color: rgba(0,0,0,.8);
     padding: 20px 0;
-}
+  }
+
+  .black {
+    color: black;
+  }
+
+  .padded {
+    padding: 15px;
+  }
+
+  .gray-background {
+    background-color: rgba(255,255,255,.4);
+  }
+
+  #flash {
+    position: relative;
+    width: 200px;
+    margin: 0 auto;
+    background: rgba(255,255,255,.2);
+    padding: 10px;
+    border-radius: 5px;
+  }
+
+  .modal-title {
+    text-align: center;
+  }
+
+  .modal-wrapper .button-row {
+    padding-top: 20px;
+  }
+
+  .modal-wrapper .modal-title {
+    padding: 20px;
+  }

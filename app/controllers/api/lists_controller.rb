@@ -6,6 +6,7 @@ class Api::ListsController < ApplicationController
 
   def create
     @list = List.new(list_params)
+    @list[:owner_id] = current_user.id
     if @list.save
       @userlist = UserList.new(list_id: @list.id, user_id: current_user.id)
       if @userlist.save
@@ -27,11 +28,23 @@ class Api::ListsController < ApplicationController
     end
   end
 
+  def remove_user_from_list(list_id)
+    @userlist = UserList.where(list_id: list_id).where(user_id: current_user.id)
+    unless @userlist.empty?
+      UserList.destroy(@userlist.first.id)
+    end
+  end
+
   def destroy
     @list = List.find(params[:id])
-    List.delete(params[:id])
-    render :show
+    if @list.owner == current_user.id
+      List.delete(params[:id])
+    else
+      remove_user_from_list(params[:id])
+    end
+    render json: {user_id: current_user.id}
   end
+
 
   def show
     @list = List.find(params[:id])

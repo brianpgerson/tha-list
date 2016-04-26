@@ -10,6 +10,11 @@ class User < ActiveRecord::Base
   has_many :user_lists
   has_many :lists, through: :user_lists, source: :list
 
+  has_many :owned_lists,
+    foreign_key: :owner_id,
+    primary_key: :id,
+    class_name: "List"
+
   def reset_session_token
     self.session_token == User.generate_session_token
     self.save!

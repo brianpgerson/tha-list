@@ -40,6 +40,10 @@ var ListActions = {
 
   addUserList: function(userListParams) {
     ListServerApi.addUserList(userListParams);
+  },
+
+  deleteList: function(listId) {
+    ListServerApi.deleteList(listId, ListActions.getUserLists);
   }
 
 };

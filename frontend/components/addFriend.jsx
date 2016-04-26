@@ -50,11 +50,9 @@ var AddFriend = React.createClass({
     if (this.state.selectedFriend === null ||
         this.state.currentList === undefined) {
       ErrorHandler.sendError(['Please choose a friend and a list!']);
-    } else
-    {
-      debugger;
-      var userListParams =
-        {
+    } else {
+
+      var userListParams = {
           userList: {
                   userId: this.state.selectedFriend,
                   listId: this.state.currentList.id
@@ -62,6 +60,7 @@ var AddFriend = React.createClass({
         };
       ListActions.addUserList(userListParams);
     }
+    
   },
 
   _handleListChange: function(e){

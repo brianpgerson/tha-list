@@ -1,4 +1,6 @@
 var ErrorActions = require('../actions/errorActions');
+var ModalActions = require('../actions/modalActions');
+var FlashActions = require('../actions/flashActions');
 
 var ListServerApi = {
   addList: function(listParams, callback) {
@@ -22,7 +24,7 @@ var ListServerApi = {
       type: "POST",
       data: userListParams,
       success: function(data) {
-        
+        FlashActions.sendMessage(["User Added!"]);
       },
       error: function(response){
           var error = JSON.parse(response.responseText).errors;
@@ -43,6 +45,21 @@ var ListServerApi = {
         var error = JSON.parse(response.responseText).errors;
         ErrorActions.sendError(error);
       }
+    });
+  },
+
+  deleteList: function(listId, callback){
+    $.ajax({
+      url: "api/lists/" + listId,
+      type: "DELETE",
+      success: function(data){
+        callback(data.user_id);
+        FlashActions.sendMessage(["List Removed!"]);
+      },
+      error: function(response){
+          var error = JSON.parse(response.responseText).errors;
+          ErrorActions.sendError(error);
+        }
     });
   },
 

@@ -34,8 +34,8 @@ class Api::UsersController < ApplicationController
   end
 
   def search
-    @users = User.where("username ILIKE (?)", "%#{params[:search_term]}%").where("username NOT ILIKE (?)", "%#{current_user.username}%");
-
+    @users = User.where("username ILIKE (?)", "%#{params[:search_term]}%")
+                  .where("username NOT ILIKE (?)", "%#{current_user.username}%");
     render :index
   end
 
