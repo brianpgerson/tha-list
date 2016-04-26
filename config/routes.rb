@@ -9,4 +9,6 @@ Rails.application.routes.draw do
     resources :listings, only: [:create, :update, :show, :destroy]
   end
   get 'api/session/auth', :to => 'api/sessions#authenticate'
+  get 'api/searchusers', :to => 'api/users#search'
+  post 'api/userlists', :to => 'api/lists#add_user'
 end

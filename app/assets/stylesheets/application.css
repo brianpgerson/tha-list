@@ -16,7 +16,7 @@
  @media all and (max-width: 800px) {
 
   footer {
-    bottom: -100px;
+    bottom: -200px;
   }
 
   header {
@@ -105,6 +105,21 @@
     width: 98%;
     font-size: 1.2em;
     margin: 0 auto;
+    display: block;
+    color: white;
+    background-color: black;
+  }
+
+  #empty_list {
+    margin: auto;
+    text-align: center;
+  }
+
+  .friend-selector {
+    width: 80%;
+    font-size: 1.2em;
+    margin: auto;
+    margin-bottom: 25px;
     display: block;
     color: white;
     background-color: black;

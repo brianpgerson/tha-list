@@ -54,23 +54,35 @@
 	var List = __webpack_require__(245);
 	var Map = __webpack_require__(250);
 	var Add = __webpack_require__(251);
+	var SessionStore = __webpack_require__(217);
 	var AddList = __webpack_require__(255);
+	var AddFriend = __webpack_require__(257);
 	var AddItem = __webpack_require__(252);
 	var About = __webpack_require__(256);
 	
 	var routes = React.createElement(
 	  Route,
 	  { path: '/', component: App },
-	  React.createElement(Route, { path: 'map', component: Map }),
-	  React.createElement(Route, { path: 'list', component: List }),
+	  React.createElement(Route, { path: 'map', component: Map, onEnter: checkLogin }),
+	  React.createElement(Route, { path: 'list', component: List, onEnter: checkLogin }),
 	  React.createElement(
 	    Route,
 	    { path: 'add', component: Add },
-	    React.createElement(Route, { path: 'newitem', component: AddItem }),
-	    React.createElement(Route, { path: 'newlist', component: AddList })
+	    React.createElement(Route, { path: 'newitem', component: AddItem, onEnter: checkLogin }),
+	    React.createElement(Route, { path: 'newlist', component: AddList, onEnter: checkLogin }),
+	    React.createElement(Route, { path: 'newfriend', component: AddFriend, onEnter: checkLogin })
 	  ),
 	  React.createElement(Route, { path: 'about', component: About })
 	);
+	
+	function checkLogin(nextState, replace) {
+	  if (!SessionStore.isLoggedIn()) {
+	    replace({
+	      pathname: '/',
+	      state: { nextPathname: nextState.location.pathname }
+	    });
+	  }
+	}
 	
 	document.addEventListener('DOMContentLoaded', function () {
 	  var root = document.querySelector('#root');
@@ -24788,7 +24800,9 @@
 	      loggedIn: SessionStore.isLoggedIn(),
 	      currentUser: currentUser
 	    });
-	    ListActions.getUserLists(currentUser.userId);
+	    if (currentUser.userId) {
+	      ListActions.getUserLists(currentUser.userId);
+	    }
 	  },
 	  _handleUserLists: function () {
 	    this.setState({
@@ -24918,8 +24932,7 @@
 	var _sessionState = {
 	  sessionToken: null,
 	  username: null,
-	  userId: null,
-	  createdAt: null
+	  userId: null
 	};
 	
 	var SessionStore = new Store(AppDispatcher);
@@ -24928,7 +24941,6 @@
 	  _sessionState['sessionToken'] = sessionParams['session_token'];
 	  _sessionState['username'] = sessionParams['username'];
 	  _sessionState['userId'] = sessionParams['id'];
-	  _sessionState['createdAt'] = sessionParams['created_at'];
 	}
 	
 	SessionStore.__onDispatch = function (payload) {
@@ -24942,7 +24954,7 @@
 	      this.__emitChange();
 	      break;
 	    case "LOGGED_OUT":
-	      setSessionState(payload.sessionParams.user);
+	      setSessionState(payload.sessionParams);
 	      this.__emitChange();
 	      break;
 	  }
@@ -31666,8 +31678,8 @@
 	    AuthServerApi.requestLogin(sessionParams, AuthActions.receiveLoggedInUser);
 	  },
 	
-	  logout: function (sessionParams) {
-	    AuthServerApi.requestLogout(sessionParams, AuthActions.receiveLoggedOutUser);
+	  logout: function () {
+	    AuthServerApi.requestLogout(AuthActions.receiveLoggedOutUser);
 	  },
 	
 	  signup: function (userParams) {
@@ -31714,11 +31726,10 @@
 	      }
 	    });
 	  },
-	  requestLogout: function (data, callback) {
+	  requestLogout: function (callback) {
 	    $.ajax({
 	      url: "api/session",
 	      type: "DELETE",
-	      data: data,
 	      success: function (response) {
 	        callback(response);
 	      },
@@ -31749,6 +31760,21 @@
 	      data: { id: id },
 	      success: function (response) {
 	        callback(response);
+	      },
+	      error: function (response) {
+	        var error = JSON.parse(response.responseText).errors;
+	        ErrorActions.sendError(error);
+	      }
+	    });
+	  },
+	
+	  searchUsers: function (searchTerm, callback) {
+	    $.ajax({
+	      url: "/api/searchusers",
+	      type: "GET",
+	      data: { search_term: searchTerm },
+	      success: function (users) {
+	        callback(users);
 	      },
 	      error: function (response) {
 	        var error = JSON.parse(response.responseText).errors;
@@ -31787,6 +31813,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
+	var ErrorHandler = __webpack_require__(253);
 	var SessionStore = __webpack_require__(217);
 	var AuthActions = __webpack_require__(237);
 	
@@ -31868,15 +31895,15 @@
 	            onChange: this.handleInputChanges })
 	        ),
 	        React.createElement('input', { type: 'submit',
-	          value: 'Sign Up',
-	          name: 'signup',
-	          onClick: this.handleSubmits }),
-	        React.createElement('input', { type: 'submit',
 	          value: 'Log In',
 	          name: 'login',
+	          onClick: this.handleSubmits }),
+	        React.createElement('input', { type: 'submit',
+	          value: 'Sign Up',
+	          name: 'signup',
 	          onClick: this.handleSubmits })
 	      ),
-	      React.createElement('div', { className: 'errorHandler' })
+	      React.createElement(ErrorHandler, null)
 	    );
 	  }
 	});
@@ -31888,9 +31915,10 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
+	var AuthActions = __webpack_require__(237);
 	
 	var Footer = React.createClass({
-	  displayName: "Footer",
+	  displayName: 'Footer',
 	
 	  contextTypes: {
 	    router: React.PropTypes.object.isRequired
@@ -31900,24 +31928,34 @@
 	    this.context.router.push("about");
 	  },
 	
+	  _handleLogOutClick: function () {
+	    AuthActions.logout();
+	    this.context.router.push("/");
+	  },
+	
 	  render: function () {
 	    return React.createElement(
-	      "footer",
+	      'footer',
 	      null,
 	      React.createElement(
-	        "a",
-	        { className: "text-link", onClick: this._handleAboutClick },
-	        "About"
+	        'a',
+	        { className: 'text-link', onClick: this._handleAboutClick },
+	        'About'
 	      ),
 	      React.createElement(
-	        "a",
-	        { className: "text-link", href: "http://www.briangerson.me", target: "_blank" },
-	        "Portfolio"
+	        'a',
+	        { className: 'text-link', onClick: this._handleLogOutClick },
+	        'Log Out!'
 	      ),
 	      React.createElement(
-	        "a",
-	        { className: "text-link", href: "http://www.github.com/brianpgerson/tha-list", target: "_blank" },
-	        "GitHub"
+	        'a',
+	        { className: 'text-link', href: 'http://www.briangerson.me', target: '_blank' },
+	        'Portfolio'
+	      ),
+	      React.createElement(
+	        'a',
+	        { className: 'text-link', href: 'http://www.github.com/brianpgerson/tha-list', target: '_blank' },
+	        'GitHub'
 	      )
 	    );
 	  }
@@ -32029,6 +32067,10 @@
 	
 	  addList: function (listParams) {
 	    ListServerApi.addList(listParams, ListActions.receiveAndSetCurrent);
+	  },
+	
+	  addUserList: function (userListParams) {
+	    ListServerApi.addUserList(userListParams);
 	  }
 	
 	};
@@ -32050,6 +32092,19 @@
 	      success: function (data) {
 	        callback(data);
 	      },
+	      error: function (response) {
+	        var error = JSON.parse(response.responseText).errors;
+	        ErrorActions.sendError(error);
+	      }
+	    });
+	  },
+	
+	  addUserList: function (userListParams) {
+	    $.ajax({
+	      url: "api/userlists",
+	      type: "POST",
+	      data: userListParams,
+	      success: function (data) {},
 	      error: function (response) {
 	        var error = JSON.parse(response.responseText).errors;
 	        ErrorActions.sendError(error);
@@ -32143,7 +32198,11 @@
 	    return listings;
 	  },
 	  render: function () {
-	    var listings = this.returnListings();
+	    var listings = this.returnListings()[0] !== undefined ? this.returnListings() : React.createElement(
+	      'li',
+	      { id: 'empty_list' },
+	      'This list is empty!'
+	    );
 	    return React.createElement(
 	      'div',
 	      null,
@@ -32550,9 +32609,6 @@
 
 	var React = __webpack_require__(1);
 	var ListStore = __webpack_require__(242);
-	var AddItem = __webpack_require__(252);
-	var AddList = __webpack_require__(255);
-	var AddFriend = __webpack_require__(257);
 	
 	var Add = React.createClass({
 	  displayName: 'Add',
@@ -32640,6 +32696,19 @@
 	
 	  contextTypes: {
 	    router: React.PropTypes.object.isRequired
+	  },
+	
+	  componentWillMount: function () {
+	    this.listListener = ListStore.addListener(this._handleCurrentList);
+	  },
+	
+	  componentWillUnmount: function () {
+	    this.listListener.remove();
+	  },
+	  _handleCurrentList: function () {
+	    this.setState({
+	      currentList: ListStore.returnCurrentList()
+	    });
 	  },
 	
 	  handleInputChanges: function (e) {
@@ -33006,8 +33075,11 @@
 
 	var React = __webpack_require__(1);
 	var SessionStore = __webpack_require__(217);
+	var UserStore = __webpack_require__(259);
 	var ErrorHandler = __webpack_require__(253);
+	var ListStore = __webpack_require__(242);
 	var ListActions = __webpack_require__(243);
+	var UserActions = __webpack_require__(258);
 	var AuthActions = __webpack_require__(237);
 	
 	var AddFriend = React.createClass({
@@ -33016,10 +33088,35 @@
 	  getInitialState: function () {
 	    return {
 	      friendSearchTerm: "",
-	      potentialFriends: [],
+	      searchResults: null,
+	      selectedFriend: null,
+	      currentList: ListStore.returnCurrentList(),
 	      added: false
 	    };
 	  },
+	
+	  componentWillMount: function () {
+	    this.searchListener = UserStore.addListener(this._handleSearchResults);
+	    this.listListener = ListStore.addListener(this._handleCurrentList);
+	  },
+	
+	  componentWillUnmount: function () {
+	    this.searchListener.remove();
+	    this.listListener.remove();
+	  },
+	
+	  _handleCurrentList: function () {
+	    this.setState({
+	      currentList: ListStore.returnCurrentList()
+	    });
+	  },
+	
+	  _handleSearchResults: function () {
+	    this.setState({
+	      searchResults: UserStore.all()
+	    });
+	  },
+	
 	  handleInputChanges: function (e) {
 	    e.preventDefault();
 	    this.setState({ [e.target.name]: e.target.value });
@@ -33027,19 +33124,70 @@
 	
 	  handleSubmits: function (e) {
 	    e.preventDefault();
-	    if (this.state.name.length === 0) {
-	      ErrorHandler.sendError(['Please give this poor list a name!']);
+	    if (this.state.selectedFriend === null || this.state.currentList === undefined) {
+	      ErrorHandler.sendError(['Please choose a friend and a list!']);
 	    } else {
-	
-	      var listParams = {
-	        list: {
-	          name: this.state.name
+	      debugger;
+	      var userListParams = {
+	        userList: {
+	          userId: this.state.selectedFriend,
+	          listId: this.state.currentList.id
 	        }
 	      };
-	      ListActions.addList(listParams);
+	      ListActions.addUserList(userListParams);
 	    }
 	  },
+	
+	  _handleListChange: function (e) {
+	    e.preventDefault();
+	    this.setState({
+	      selectedFriend: e.target.value
+	    });
+	  },
+	
+	  returnSearchResults: function (e) {
+	    e.preventDefault();
+	    UserActions.searchForUser(this.state.friendSearchTerm);
+	  },
+	
 	  render: function () {
+	
+	    var searchResults;
+	    if (this.state.searchResults === null) {
+	      searchResults = React.createElement('div', null);
+	    } else if (this.state.searchResults.length > 0) {
+	      var friends = this.state.searchResults.map(function (user) {
+	        return React.createElement(
+	          'option',
+	          { key: user.id, value: user.id },
+	          user.username
+	        );
+	      });
+	      searchResults = React.createElement(
+	        'div',
+	        null,
+	        React.createElement(
+	          'select',
+	          { className: 'friend-selector',
+	            defaultValue: 'default',
+	            name: 'lists',
+	            onChange: this._handleListChange },
+	          React.createElement(
+	            'option',
+	            { value: 'default' },
+	            'Select a Friend'
+	          ),
+	          friends
+	        )
+	      );
+	    } else {
+	      searchResults = React.createElement(
+	        'div',
+	        { style: { marginBottom: "20px" } },
+	        'No usernames matched that search!'
+	      );
+	    }
+	
 	    return React.createElement(
 	      'div',
 	      { className: 'list-form' },
@@ -33049,30 +33197,32 @@
 	        React.createElement(
 	          'h1',
 	          null,
-	          'add a new list!'
+	          'add a new friend!'
 	        ),
 	        React.createElement(
 	          'div',
 	          null,
 	          React.createElement(
 	            'label',
-	            { htmlFor: 'name' },
-	            'New List Name'
+	            { htmlFor: 'friendSearchTerm' },
+	            'Search For Friends'
 	          ),
 	          React.createElement('br', null),
 	          React.createElement('input', { type: 'text',
 	            className: 'login-text-input',
-	            name: 'name',
-	            value: this.state.name,
+	            name: 'friendSearchTerm',
+	            placeholder: 'search by username',
+	            value: this.state.friendSearchTerm,
 	            onChange: this.handleInputChanges })
 	        ),
+	        searchResults,
 	        React.createElement(
 	          'div',
 	          null,
 	          React.createElement('input', { type: 'submit',
 	            className: 'main-button secondary-color',
-	            value: 'add it!',
-	            onClick: this.handleSubmits })
+	            value: this.state.selectedFriend ? "Add Friend!" : "Search!",
+	            onClick: this.state.selectedFriend ? this.handleSubmits : this.returnSearchResults })
 	        )
 	      ),
 	      React.createElement(
@@ -33085,6 +33235,63 @@
 	});
 	
 	module.exports = AddFriend;
+
+/***/ },
+/* 258 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AuthServerUtil = __webpack_require__(238);
+	var AppDispatcher = __webpack_require__(218);
+	
+	var UserActions = {
+	
+	  // INBOUND
+	
+	  receiveSearchedUsers: function (users) {
+	    AppDispatcher.dispatch({
+	      actionType: "RECEIVE_SEARCHED_USERS",
+	      users: users
+	    });
+	  },
+	
+	  // OUTBOUND
+	
+	  searchForUser: function (searchTerm) {
+	    AuthServerUtil.searchUsers(searchTerm, UserActions.receiveSearchedUsers);
+	  }
+	};
+	
+	module.exports = UserActions;
+
+/***/ },
+/* 259 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(218);
+	var Store = __webpack_require__(222).Store;
+	
+	var _users = [];
+	
+	var UserStore = new Store(AppDispatcher);
+	
+	function setUsers(users) {
+	  _users = users;
+	}
+	
+	UserStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	    case "RECEIVE_SEARCHED_USERS":
+	      setUsers(payload.users);
+	      this.__emitChange();
+	      break;
+	  }
+	};
+	
+	UserStore.all = function () {
+	  return _users.slice();
+	};
+	
+	module.exports = UserStore;
 
 /***/ }
 /******/ ]);

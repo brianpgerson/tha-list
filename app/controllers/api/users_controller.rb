@@ -1,3 +1,4 @@
+require 'byebug'
 class Api::UsersController < ApplicationController
 
   def new
@@ -32,6 +33,13 @@ class Api::UsersController < ApplicationController
       render json: {errors: ["No user with that id."]}, status: :unprocessable_entity
     end
   end
+
+  def search
+    @users = User.where("username ILIKE (?)", "%#{params[:search_term]}%").where("username NOT ILIKE (?)", "%#{current_user.username}%");
+
+    render :index
+  end
+
 
   private
 

@@ -35,9 +35,8 @@ var AuthActions = {
     AuthServerApi.requestLogin(sessionParams, AuthActions.receiveLoggedInUser);
   },
 
-  logout: function(sessionParams) {
-    AuthServerApi.requestLogout(sessionParams,
-                                AuthActions.receiveLoggedOutUser);
+  logout: function() {
+    AuthServerApi.requestLogout(AuthActions.receiveLoggedOutUser);
   },
 
   signup: function(userParams) {

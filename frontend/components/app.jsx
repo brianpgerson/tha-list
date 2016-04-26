@@ -35,7 +35,9 @@ var App = React.createClass({
       loggedIn: SessionStore.isLoggedIn(),
       currentUser: currentUser
     });
-    ListActions.getUserLists(currentUser.userId);
+    if (currentUser.userId) {
+      ListActions.getUserLists(currentUser.userId);
+    }
   },
   _handleUserLists: function(){
     this.setState({

@@ -18,6 +18,15 @@ class Api::ListsController < ApplicationController
     end
   end
 
+  def add_user
+    @userlist = UserList.new(user_id: user_list_params[:userId], list_id: user_list_params[:listId])
+    if @userlist.save
+      render json: {userlist: "it worked!"}
+    else
+      render json: {errors: @userlist.errors.full_messages}, status: :unprocessable_entity
+    end
+  end
+
   def destroy
     @list = List.find(params[:id])
     List.delete(params[:id])
@@ -46,6 +55,10 @@ class Api::ListsController < ApplicationController
 
   def list_params
     params.require(:list).permit(:name)
+  end
+
+  def user_list_params
+    params.require(:userList).permit(:userId, :listId)
   end
 
 end

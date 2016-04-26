@@ -47,7 +47,8 @@ var List = React.createClass({
     return listings;
   },
   render: function(){
-    var listings = this.returnListings();
+    var listings = this.returnListings()[0] !== undefined ?
+      this.returnListings() : <li id="empty_list">This list is empty!</li>;
     return (
       <div>
         <ul className="list-ul">

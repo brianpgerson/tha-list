@@ -29,11 +29,10 @@ var AuthServerApi = {
       }
     });
   },
-  requestLogout: function(data, callback){
+  requestLogout: function(callback){
     $.ajax({
       url: "api/session",
       type: "DELETE",
-      data: data,
       success: function(response){
         callback(response);
       },
@@ -64,6 +63,21 @@ var AuthServerApi = {
       data: {id: id},
       success: function(response){
         callback(response);
+      },
+      error: function(response){
+        var error = JSON.parse(response.responseText).errors;
+        ErrorActions.sendError(error);
+      }
+    });
+  },
+
+  searchUsers: function(searchTerm, callback){
+    $.ajax({
+      url: "/api/searchusers",
+      type: "GET",
+      data: {search_term: searchTerm},
+      success: function(users){
+        callback(users);
       },
       error: function(response){
         var error = JSON.parse(response.responseText).errors;

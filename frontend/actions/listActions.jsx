@@ -36,6 +36,10 @@ var ListActions = {
 
   addList: function(listParams) {
     ListServerApi.addList(listParams, ListActions.receiveAndSetCurrent);
+  },
+
+  addUserList: function(userListParams) {
+    ListServerApi.addUserList(userListParams);
   }
 
 };

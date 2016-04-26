@@ -4,8 +4,7 @@ var Store = require('flux/utils').Store;
 var _sessionState = {
   sessionToken: null,
   username: null,
-  userId: null,
-  createdAt: null
+  userId: null
 };
 
 var SessionStore = new Store(AppDispatcher);
@@ -14,7 +13,6 @@ function setSessionState(sessionParams){
   _sessionState['sessionToken'] = sessionParams['session_token'];
   _sessionState['username'] = sessionParams['username'];
   _sessionState['userId'] = sessionParams['id'];
-  _sessionState['createdAt'] = sessionParams['created_at'];
 }
 
 SessionStore.__onDispatch = function(payload) {
@@ -28,7 +26,7 @@ SessionStore.__onDispatch = function(payload) {
     this.__emitChange();
     break;
   case "LOGGED_OUT":
-    setSessionState(payload.sessionParams.user);
+    setSessionState(payload.sessionParams);
     this.__emitChange();
     break;
   }

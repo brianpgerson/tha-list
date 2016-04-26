@@ -18,6 +18,19 @@ var AddItem = React.createClass({
     router: React.PropTypes.object.isRequired
   },
 
+  componentWillMount: function() {
+    this.listListener = ListStore.addListener(this._handleCurrentList);
+  },
+
+  componentWillUnmount: function() {
+    this.listListener.remove();
+  },
+  _handleCurrentList: function(){
+    this.setState({
+      currentList: ListStore.returnCurrentList()
+    });
+  },
+
   handleInputChanges: function(e){
     e.preventDefault();
     this.setState({[e.target.name]: e.target.value});

@@ -1,4 +1,5 @@
 var React = require('react');
+var ErrorHandler = require('./errorHandler');
 var SessionStore = require('../stores/sessionStore');
 var AuthActions = require('../actions/authActions');
 
@@ -59,17 +60,16 @@ var Login = React.createClass({
                     onChange={this.handleInputChanges}/>
           </div>
             <input type="submit"
-                    value="Sign Up"
-                    name="signup"
-                    onClick={this.handleSubmits} />
-            <input type="submit"
                     value="Log In"
                     name="login"
                     onClick={this.handleSubmits} />
 
+            <input type="submit"
+                    value="Sign Up"
+                    name="signup"
+                    onClick={this.handleSubmits} />
         </form>
-        <div className="errorHandler">
-        </div>
+        <ErrorHandler />
       </div>
     );
   }

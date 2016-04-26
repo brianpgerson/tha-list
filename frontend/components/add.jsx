@@ -1,8 +1,6 @@
 var React = require('react');
 var ListStore = require('../stores/listStore');
-var AddItem = require('./addItem');
-var AddList = require('./addList');
-var AddFriend = require('./addFriend');
+
 
 var Add = React.createClass({
   getInitialState: function() {
